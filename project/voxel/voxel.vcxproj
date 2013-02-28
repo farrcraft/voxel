@@ -105,10 +105,12 @@
     <ClInclude Include="..\..\src\AssetLoader.h" />
     <ClInclude Include="..\..\src\Camera.h" />
     <ClInclude Include="..\..\src\Chunk.h" />
+    <ClInclude Include="..\..\src\Color.h" />
     <ClInclude Include="..\..\src\Controller.h" />
     <ClInclude Include="..\..\src\GameState.h" />
     <ClInclude Include="..\..\src\Item.h" />
     <ClInclude Include="..\..\src\Mesh.h" />
+    <ClInclude Include="..\..\src\Normal.h" />
     <ClInclude Include="..\..\src\Player.h" />
     <ClInclude Include="..\..\src\Prism.h" />
     <ClInclude Include="..\..\src\Program.h" />

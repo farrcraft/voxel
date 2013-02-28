@@ -93,27 +93,27 @@ bool Controller::exec(const v3D::CommandInfo & command, const std::string & para
 
 	if (command.name() == "moveForward")
 	{
-		scene_->player().move(Player::MOVE_FORWARD);
+		scene_->player()->move(Player::MOVE_FORWARD);
 	}
 	else if (command.name() == "moveBackward")
 	{
-		scene_->player().move(Player::MOVE_BACKWARD);
+		scene_->player()->move(Player::MOVE_BACKWARD);
 	}
 	else if (command.name() == "moveLeft")
 	{
-		scene_->player().move(Player::MOVE_LEFT);
+		scene_->player()->move(Player::MOVE_LEFT);
 	}
 	else if (command.name() == "moveRight")
 	{
-		scene_->player().move(Player::MOVE_RIGHT);
+		scene_->player()->move(Player::MOVE_RIGHT);
 	}
 	else if (command.name() == "moveUp")
 	{
-		scene_->player().move(Player::MOVE_UP);
+		scene_->player()->move(Player::MOVE_UP);
 	}
 	else if (command.name() == "moveDown")
 	{
-		scene_->player().move(Player::MOVE_DOWN);
+		scene_->player()->move(Player::MOVE_DOWN);
 	}
 
 	return false;
@@ -140,20 +140,20 @@ void Controller::motion(unsigned int x, unsigned int y)
 
 	if (x > last_[0])
 	{
-		scene_->player().look(Player::LOOK_RIGHT);
+		scene_->player()->look(Player::LOOK_RIGHT);
 	}
 	else if (x < last_[0])
 	{
-		scene_->player().look(Player::LOOK_LEFT);
+		scene_->player()->look(Player::LOOK_LEFT);
 	}
 
 	if (y > last_[1])
 	{
-		scene_->player().look(Player::LOOK_UP);
+		scene_->player()->look(Player::LOOK_UP);
 	}
 	else if (y < last_[1])
 	{
-		scene_->player().look(Player::LOOK_DOWN);
+		scene_->player()->look(Player::LOOK_DOWN);
 	}
 
 	last_ = position;

@@ -8,9 +8,13 @@
 #pragma once
 
 #include "Vertex.h"
+#include "Color.h"
+#include "Normal.h"
 #include "Mesh.h"
 
 #include <3dtypes/Vector3.h>
+
+#include <boost/shared_ptr.hpp>
 
 /**
  * A single voxel
@@ -60,22 +64,26 @@ class Voxel
 		 * @param mesh generate the voxel vertex data into this mesh
 		 * @param faces specify which block faces should be generated
 		 */
-		void generate(Mesh & mesh, unsigned int faces);
+		void generate(boost::shared_ptr<Mesh> mesh, unsigned int faces);
 
 	protected:
 		/**
 		 * Generate a vertex from a vector
 		 *
 		 */
-		Vertex vertex(const v3D::Vector3 & vec, const v3D::Vector3 & color);
+		Vertex vertex(const v3D::Vector3 & vec);
+		Normal normal(const v3D::Vector3 & vec);
+		Color color(const v3D::Vector3 & vec);
 		/**
 		 * Add a vertex to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
-		unsigned int createFaceVertex(Mesh & mesh, const v3D::Vector3 & position, const v3D::Vector3 & color, unsigned int drawFaces, unsigned int inFaces);
+		unsigned int createFaceVertex(boost::shared_ptr<Mesh> mesh, const v3D::Vector3 & position, unsigned int drawFaces, unsigned int inFaces);
 		/**
 		 * Add a tri to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
-		void createFaceTri(Mesh & mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces);
+		void createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces);
+
+		Color color();
 
 		bool active() const;
 		void active(bool enabled);

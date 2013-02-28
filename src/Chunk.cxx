@@ -28,7 +28,7 @@ Chunk::Chunk() :
 }
 
 // generate a single mesh for the entire chunk
-void Chunk::generate(Mesh & mesh)
+void Chunk::generate(boost::shared_ptr<Mesh> mesh)
 {
 	for (std::vector<Voxel>::iterator it = blocks_.begin(); it != blocks_.end(); ++it)
 	{

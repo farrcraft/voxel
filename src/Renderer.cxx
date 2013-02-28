@@ -56,19 +56,28 @@ Renderer::Renderer(boost::shared_ptr<Scene> scene, AssetLoader loader) :
 
 	glUniform4f(lightIntensity, 0.8f, 0.8f, 0.8f, 1.0f);
 	glUniform4f(ambientIntensity, 0.2f, 0.2f, 0.2f, 1.0f);
+	/*
+	glm::vec4 g_lightDirection(0.866f, 0.5f, 0.0f, 0.0f);
+	glutil::MatrixStack modelMatrix;
+	// CalcMatrix() generates a world-to-camera matrix
+	modelMatrix.SetMatrix(g_viewPole.CalcMatrix());
+	glm::vec4 lightDirCameraSpace = modelMatrix.Top() * g_lightDirection;
 	glUniform3fv(dirToLight, 1, glm::value_ptr(lightDirCameraSpace));
+	*/
+	v3D::Vector3 lightDirCameraSpace(0.0f, 1.0f, 0.0f);
+	glUniform3fv(dirToLight, 1, *lightDirCameraSpace);
 
 	program_->disable();
 
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);
 
-	Mesh & mesh = scene_->mesh();
-	unsigned int vbo = createVertexBuffer(mesh.vertices());
-	mesh.addBuffer("vbo", vbo);
+	boost::shared_ptr<Mesh> mesh = scene_->mesh();
+	unsigned int vbo = createVertexBuffer(mesh);
+	mesh->addBuffer("vbo", vbo);
 
-	unsigned int ebo = createIndexBuffer(mesh.tris());
-	mesh.addBuffer("ebo", ebo);
+	unsigned int ebo = createIndexBuffer(mesh->tris());
+	mesh->addBuffer("ebo", ebo);
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -94,15 +103,32 @@ unsigned int Renderer::createIndexBuffer(const std::vector<unsigned int> & data)
 	return ebo;
 }
 
-unsigned int Renderer::createVertexBuffer(const std::vector<Vertex> & data)
+unsigned int Renderer::createVertexBuffer(boost::shared_ptr<Mesh> mesh)
 {
 	unsigned int vbo;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	// [TODO] - initial setup should pass NULL for the data instead of the actual data
-	// use calls to glBufferSubData() to supply actual data - 
-	// 3 calls to supply each set of data for vertices, normals, colors individually
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(Vertex), &data[0], GL_STATIC_DRAW);
+
+	std::vector<Vertex> & vertices = mesh->vertices();
+	std::vector<Color> & colors = mesh->colors();
+	std::vector<Normal> & normals = mesh->normals();
+
+	size_t vertexSize = sizeof(Vertex) * vertices.size();
+	size_t colorSize = sizeof(Color) * colors.size();
+	size_t normalSize = sizeof(Normal) * normals.size();
+
+	size_t bufferSize = vertexSize + colorSize + normalSize;
+
+	// allocate buffer
+	glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
+	// fill buffer with mesh data
+	unsigned int offset = 0;
+	glBufferSubData(GL_ARRAY_BUFFER, offset, vertexSize, &vertices[0]);
+	offset += vertexSize;
+	glBufferSubData(GL_ARRAY_BUFFER, offset, colorSize, &colors[0]);
+	offset += colorSize;
+	glBufferSubData(GL_ARRAY_BUFFER, offset, normalSize, &normals[0]);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	return vbo;
@@ -123,38 +149,46 @@ void Renderer::draw(Hookah::Window * window)
 	view = scene_->camera()->view();
 	glUniformMatrix4fv(viewMatrix, 1, GL_TRUE, *view);
 
-	Mesh & mesh = scene_->mesh();
-	drawMesh(mesh.buffer("ebo"), mesh.buffer("vbo"), mesh.tris().size());
+	drawMesh(scene_->mesh());
 
 	program_->disable();
 }
 
 
-void Renderer::drawMesh(unsigned int ebo, unsigned int vbo, unsigned int indices)
+void Renderer::drawMesh(boost::shared_ptr<Mesh> mesh)
 {
+	unsigned int ebo = mesh->buffer("ebo");
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
+	unsigned int vbo = mesh->buffer("vbo");
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
 	// vertex attributes
 	glEnableVertexAttribArray(0);
 	// color attributes
 	glEnableVertexAttribArray(1);
+	// normal attributes
+	glEnableVertexAttribArray(2);
 
-	size_t colorData = sizeof(Vertex) / 2;
+	size_t colorData = mesh->vertices().size() * sizeof(Vertex);
+	size_t normalData = colorData + (mesh->colors().size() * sizeof(Color));
 	// attribute, # of elements, element type, transpose?, offset between elements, offset of first element
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(colorData));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), reinterpret_cast<void*>(colorData));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), reinterpret_cast<void*>(normalData));
 
-	// [TODO] - call glVertexAttribDivisor() for attrib pointers #1 & #2 (colors & normals)
 	// a single color value is used for entire cubes and only one normal for every pair of tris (per cube face)
+	glVertexAttribDivisor(1, 36);
+	glVertexAttribDivisor(2, 6);
+
+	unsigned int indices = mesh->tris().size();
 	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, reinterpret_cast<void*>(0));
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 }
 
-void Renderer::drawVoxel(const Voxel & voxel)
-{
-}
 
 void Renderer::resize(int width, int height)
 {

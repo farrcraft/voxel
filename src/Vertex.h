@@ -13,12 +13,8 @@
  */
 typedef struct Vertex
 {
-	/*
 	float position_[3];
-	float texcoord_[2];
-	*/
-	float position_[4];
-	float color_[4];
 } Vertex;
 
 bool operator == (const Vertex & v1, const Vertex & v2);
+

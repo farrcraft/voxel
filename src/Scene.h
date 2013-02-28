@@ -18,14 +18,14 @@ class Scene
 	public:
 		Scene();
 
-		Player & player();
-		GameState & state();
+		boost::shared_ptr<Player> player();
+		boost::shared_ptr<GameState> state();
 		boost::shared_ptr<Camera> camera();
-		Mesh & mesh();
+		boost::shared_ptr<Mesh> mesh();
 
 	private:
-		Player player_;
-		GameState state_;
-		Mesh mesh_;
-		Chunk chunk_;
+		boost::shared_ptr<Player> player_;
+		boost::shared_ptr<GameState> state_;
+		boost::shared_ptr<Mesh> mesh_;
+		boost::shared_ptr<Chunk> chunk_;
 };

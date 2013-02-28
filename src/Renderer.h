@@ -40,10 +40,9 @@ class Renderer
 	protected:
 
 		unsigned int createIndexBuffer(const std::vector<unsigned int> & data);
-		unsigned int createVertexBuffer(const std::vector<Vertex> & data);
+		unsigned int createVertexBuffer(boost::shared_ptr<Mesh> mesh);
 
-		void drawVoxel(const Voxel & voxel);
-		void drawMesh(unsigned int ebo, unsigned int vbo, unsigned int indices);
+		void drawMesh(boost::shared_ptr<Mesh> mesh);
 
 	private:
 		boost::shared_ptr<Program> program_;

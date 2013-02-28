@@ -15,13 +15,32 @@ unsigned int Mesh::addVertex(const Vertex & vertex)
 	return (vertices_.size() - 1);
 }
 
-
 void Mesh::addTri(unsigned int a, unsigned int b, unsigned int c)
 {
 	tris_.push_back(a);
 	tris_.push_back(b);
 	tris_.push_back(c);
 }
+
+void Mesh::addColor(const Color & color)
+{
+	colors_.push_back(color);
+}
+
+void Mesh::addNormal(const Normal & normal)
+{
+	normals_.push_back(normal);
+}
+
+std::vector<Color> & Mesh::colors()
+{
+	return colors_;
+}
+
+std::vector<Normal> & Mesh::normals(){
+	return normals_;
+}
+
 
 std::vector<Vertex> & Mesh::vertices()
 {

@@ -15,7 +15,7 @@ class Chunk
 	public:
 		Chunk();
 
-		void generate(Mesh & mesh);
+		void generate(boost::shared_ptr<Mesh> mesh);
 		void update();
 		void render();
 
