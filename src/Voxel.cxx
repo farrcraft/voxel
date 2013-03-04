@@ -7,7 +7,7 @@
 
 #include "Voxel.h"
 
-Voxel::Voxel(BlockType type, const v3D::Vector3 & position) :
+Voxel::Voxel(BlockType type, const glm::vec3 & position) :
 	type_(type),
 	active_(true),
 	position_(position)
@@ -18,7 +18,7 @@ Voxel::Voxel(BlockType type, const v3D::Vector3 & position) :
 	}
 }
 
-unsigned int Voxel::createFaceVertex(boost::shared_ptr<Mesh> mesh, const v3D::Vector3 & position, unsigned int drawFaces, unsigned int inFaces)
+unsigned int Voxel::createFaceVertex(boost::shared_ptr<Mesh> mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces)
 {
 	if (drawFaces & inFaces) 
 	{
@@ -42,10 +42,10 @@ Color Voxel::color()
 		case BLOCK_TYPE_DIRT:
 			break;
 		default:
-			return color(v3D::Vector3(0.4f, 0.6f, 0.9f));
+			return color(glm::vec3(0.4f, 0.6f, 0.9f));
 			break;
 	}
-	return color(v3D::Vector3(0.5f, 0.5f, 0.5f));
+	return color(glm::vec3(0.5f, 0.5f, 0.5f));
 }
 
 void Voxel::generate(boost::shared_ptr<Mesh> mesh, unsigned int faces)
@@ -66,14 +66,14 @@ void Voxel::generate(boost::shared_ptr<Mesh> mesh, unsigned int faces)
 
 	mesh->addColor(color());
 
-	v3D::Vector3 p1(width, height, length);
-	v3D::Vector3 p2(width, -height, length);
-	v3D::Vector3 p3(-width, height, length);
-	v3D::Vector3 p4(-width, -height, length);
-	v3D::Vector3 p5(width, height, -length);
-	v3D::Vector3 p6(-width, height, -length);
-	v3D::Vector3 p7(width, -height, -length);
-	v3D::Vector3 p8(-width, -height, -length);
+	glm::vec3 p1(width, height, length);
+	glm::vec3 p2(width, -height, length);
+	glm::vec3 p3(-width, height, length);
+	glm::vec3 p4(-width, -height, length);
+	glm::vec3 p5(width, height, -length);
+	glm::vec3 p6(-width, height, -length);
+	glm::vec3 p7(width, -height, -length);
+	glm::vec3 p8(-width, -height, -length);
 
 	unsigned int v1 = createFaceVertex(mesh, p1 + position_, faces, (BLOCK_FACE_FRONT|BLOCK_FACE_RIGHT|BLOCK_FACE_TOP));
 	unsigned int v2 = createFaceVertex(mesh, p2 + position_, faces, (BLOCK_FACE_FRONT|BLOCK_FACE_RIGHT|BLOCK_FACE_BOTTOM));
@@ -87,31 +87,31 @@ void Voxel::generate(boost::shared_ptr<Mesh> mesh, unsigned int faces)
 	// front
 	createFaceTri(mesh, v1, v2, v3, faces, BLOCK_FACE_FRONT);
 	createFaceTri(mesh, v2, v4, v3, faces, BLOCK_FACE_FRONT);
-	mesh->addNormal(normal(v3D::Vector3(0.0f, 0.0f, 1.0f)));
+	mesh->addNormal(normal(glm::vec3(0.0f, 0.0f, 1.0f)));
 	// back
 	createFaceTri(mesh, v5, v6, v7, faces, BLOCK_FACE_BACK);
 	createFaceTri(mesh, v7, v6, v8, faces, BLOCK_FACE_BACK);
-	mesh->addNormal(normal(v3D::Vector3(0.0f, 0.0f, -1.0f)));
+	mesh->addNormal(normal(glm::vec3(0.0f, 0.0f, -1.0f)));
 	// left
 	createFaceTri(mesh, v3, v4, v8, faces, BLOCK_FACE_LEFT);
 	createFaceTri(mesh, v3, v8, v6, faces, BLOCK_FACE_LEFT);
-	mesh->addNormal(normal(v3D::Vector3(-1.0f, 0.0f, 0.0f)));
+	mesh->addNormal(normal(glm::vec3(-1.0f, 0.0f, 0.0f)));
 	// right
 	createFaceTri(mesh, v1, v7, v2, faces, BLOCK_FACE_RIGHT);
 	createFaceTri(mesh, v1, v5, v7, faces, BLOCK_FACE_RIGHT);
-	mesh->addNormal(normal(v3D::Vector3(1.0f, 0.0f, 0.0f)));
+	mesh->addNormal(normal(glm::vec3(1.0f, 0.0f, 0.0f)));
 	//top
 	createFaceTri(mesh, v5, v1, v3, faces, BLOCK_FACE_TOP);
 	createFaceTri(mesh, v5, v3, v6, faces, BLOCK_FACE_TOP);
-	mesh->addNormal(normal(v3D::Vector3(0.0f, 1.0f, 0.0f)));
+	mesh->addNormal(normal(glm::vec3(0.0f, 1.0f, 0.0f)));
 	// bottom
 	createFaceTri(mesh, v7, v4, v2, faces, BLOCK_FACE_BOTTOM);
 	createFaceTri(mesh, v7, v8, v4, faces, BLOCK_FACE_BOTTOM);
-	mesh->addNormal(normal(v3D::Vector3(0.0f, -1.0f, 0.0f)));
+	mesh->addNormal(normal(glm::vec3(0.0f, -1.0f, 0.0f)));
 
 }
 
-Vertex Voxel::vertex(const v3D::Vector3 &vec)
+Vertex Voxel::vertex(const glm::vec3 & vec)
 {
 	Vertex v;
 	v.position_[0] = vec[0];
@@ -121,7 +121,7 @@ Vertex Voxel::vertex(const v3D::Vector3 &vec)
 	return v;
 }
 
-Normal Voxel::normal(const v3D::Vector3 &vec)
+Normal Voxel::normal(const glm::vec3 & vec)
 {
 	Normal n;
 	n.vector_[0] = vec[0];
@@ -131,7 +131,7 @@ Normal Voxel::normal(const v3D::Vector3 &vec)
 	return n;
 }
 
-Color Voxel::color(const v3D::Vector3 &vec)
+Color Voxel::color(const glm::vec3 & vec)
 {
 	Color c;
 	c.color_[0] = vec[0];

@@ -3,12 +3,10 @@
 
 Scene::Scene()
 {
-	player_.reset(new Player(v3D::Vector3(0.0f, 0.0f, 5.0f)));
+	player_.reset(new Player(glm::vec3(0.0f, 0.0f, 25.0f)));
 	chunk_.reset(new Chunk());
 	mesh_.reset(new Mesh());
 	state_.reset(new GameState());
-
-	player_->camera()->createProjection();
 
 	chunk_->generate(mesh_);
 }

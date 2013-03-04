@@ -7,77 +7,74 @@
 
 #pragma once
 
-#include <3dtypes/Vector3.h>
-#include <3dtypes/Matrix4.h>
-#include <3dtypes/Quaternion.h>
+#include <glm/glm.hpp>
 
+/**
+ * Player camera class
+ * Based on the source here: http://www.dhpoware.com/demos/index.html
+ */
 class Camera
 {
 	public:
+		typedef enum CameraBehavior
+		{
+			CAMERA_BEHAVIOR_FIRST_PERSON,
+			CAMERA_BEHAVIOR_FLIGHT
+		} CameraBehavior;
+    
 		Camera();
 
-		void eye(const v3D::Vector3 & position);
+		void lookAt(const glm::vec3 &target);
+		void lookAt(const glm::vec3 &eye, const glm::vec3 &target, const glm::vec3 &up);
+		void move(float dx, float dy, float dz);
+		void move(const glm::vec3 &direction, const glm::vec3 &amount);
+		void perspective(float fovx, float aspect, float znear, float zfar);
+		void rotate(float headingDegrees, float pitchDegrees, float rollDegrees);
+		void updatePosition(const glm::vec3 &direction, float elapsedTimeSec);
+    
+		const glm::vec3 &acceleration() const;
+		CameraBehavior behavior() const;
+		const glm::vec3 &currentVelocity() const;
+		const glm::vec3 &position() const;
+		const glm::mat4 &projection() const;
+		const glm::vec3 &velocity() const;
+		const glm::vec3 &direction() const;
+		const glm::mat4 &view() const;
+		const glm::vec3 &xAxis() const;
+		const glm::vec3 &yAxis() const;
+		const glm::vec3 &zAxis() const;
+    
+		void acceleration(float x, float y, float z);
+		void acceleration(const glm::vec3 &acceleration);
+		void behavior(CameraBehavior newBehavior);
+		void currentVelocity(float x, float y, float z);
+		void currentVelocity(const glm::vec3 &currentVelocity);
+		void position(float x, float y, float z);
+		void position(const glm::vec3 &position);
+		void velocity(float x, float y, float z);
+		void velocity(const glm::vec3 &velocity);
 
-		// get
-		v3D::Matrix4	projection() const;
-		v3D::Matrix4 view() const;
-
-		/**
- 		 *	Create a projection matrix.
-		 *	The resulting matrix can be retrieved by calling projection().
-		 *	If the camera is set to orthographic then an orthographic projection will be created.
-		 *	Otherwise a perspective projection will be used.
-		 */
-		void createProjection();
-		/**
-		 *	Create a viewing matrix.
-		 *	The resulting matrix can be retrieved by calling view().
-		 *	The viewing matrix contains the translation and rotation portion of  the 
-		 *	camera transformation.
-		 */
-		void createView();
-
-		/**
-	 	 *	Pedestal the camera.
-		 *	Move eye on up axis - move up/down
-		 *	same as truck but use up vector instead of right vector
-		 */
-		void pedestal(float d);
-		/**
-		 *	Dolly the camera.
-		 *	Move eye forward or backward along direction of view
-		 *	same as pedestal but use direction vector instead of up vector
-		 */
-		void dolly(float d);
-		/**
-		 *	Truck the camera.
-		 *	Move eye on axis perpendicular to direction of view and up axis - move 
-		 *	left/right multiply delta value and right vector to get eye delta - 
-		 *	right vector must be normalized - add eye delta to current eye position
-		 */
-		void truck(float d);
-		/**
-		 *	Pan the camera.
-		 *	Move horizontally around a fixed axis (the camera's y axis) - camera 
-		 *	rotation & look at position changes but eye position doesn't - look left/right
-		 */
-		void pan(float angle);
-		/**
-		 *	Tilt the camera.
-		 *	Move vertically around a fixed axis (camera's x axis) - look up/down
-		 */
-		void tilt(float angle);
-
+	protected:
+		void rotateFlight(float headingDegrees, float pitchDegrees, float rollDegrees);
+		void rotateFirstPerson(float headingDegrees, float pitchDegrees);
+		void updateVelocity(const glm::vec3 &direction, float elapsedTimeSec);
+		void updateViewMatrix(bool orthogonalizeAxes);
+    
 	private:
-		float				near_;
-		float				far_;
-		float				pixelAspect_;
-		float				fov_;
-		v3D::Vector3		eye_;
-		v3D::Vector3		up_;
-		v3D::Vector3		direction_;
-		v3D::Vector3		right_;
-		v3D::Quaternion		rotation_;
-		v3D::Matrix4		projection_;
-		v3D::Matrix4		view_;			// viewing transformation
+		CameraBehavior behavior_;
+		float fovx_;
+		float near_;
+		float far_;
+		float aspect_;
+		float pitch_;
+		glm::vec3 eye_;
+		glm::vec3 xAxis_;
+		glm::vec3 yAxis_;
+		glm::vec3 zAxis_;
+		glm::vec3 direction_;
+		glm::vec3 acceleration_;
+		glm::vec3 currentVelocity_;
+		glm::vec3 velocity_;
+		glm::mat4 view_;
+		glm::mat4 projection_;
 };

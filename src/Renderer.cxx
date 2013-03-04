@@ -9,11 +9,11 @@
 #include "Program.h"
 #include "Scene.h"
 #include "Camera.h"
-
-#include <3dtypes/Matrix4.h>
+#include "Light.h"
+#include "Material.h"
 
 #include <GL/glew.h>
-
+#include <glm/gtc/type_ptr.hpp>
 #include <log4cxx/logger.h>
 
 
@@ -25,11 +25,11 @@ Renderer::Renderer(boost::shared_ptr<Scene> scene, AssetLoader loader) :
 	boost::shared_ptr<Shader> shader;
 
 	std::string script;
-	script = loader.load("shader_v1.vert");
+	script = loader.load("shader_v2.vert");
 	shader.reset(new Shader (GL_VERTEX_SHADER, script));
 	shaders.push_back(shader);
 
-	script = loader.load("shader.frag");
+	script = loader.load("shader_v2.frag");
 	shader.reset(new Shader(GL_FRAGMENT_SHADER, script));
 	shaders.push_back(shader);
 
@@ -39,33 +39,33 @@ Renderer::Renderer(boost::shared_ptr<Scene> scene, AssetLoader loader) :
 	program_->enable();
 
 	// camera & model matrices
-	v3D::Matrix4 projection;
-	projection = scene_->camera()->projection();
-	unsigned int projectionMatrix = program_->uniform("projectionMatrix");
-	glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, *projection);
-
-	v3D::Matrix4 model;
-	model.identity();
+	glm::mat4 model(1.0f);
 	unsigned int modelMatrix = program_->uniform("modelMatrix");
-	glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, *model);
+	glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, glm::value_ptr(model));
 
 	// lighting
-	unsigned int dirToLight = program_->uniform("dirToLight");
+	/*
 	unsigned int lightIntensity = program_->uniform("lightIntensity");
 	unsigned int ambientIntensity = program_->uniform("ambientIntensity");
 
 	glUniform4f(lightIntensity, 0.8f, 0.8f, 0.8f, 1.0f);
 	glUniform4f(ambientIntensity, 0.2f, 0.2f, 0.2f, 1.0f);
-	/*
-	glm::vec4 g_lightDirection(0.866f, 0.5f, 0.0f, 0.0f);
-	glutil::MatrixStack modelMatrix;
-	// CalcMatrix() generates a world-to-camera matrix
-	modelMatrix.SetMatrix(g_viewPole.CalcMatrix());
-	glm::vec4 lightDirCameraSpace = modelMatrix.Top() * g_lightDirection;
-	glUniform3fv(dirToLight, 1, glm::value_ptr(lightDirCameraSpace));
 	*/
-	v3D::Vector3 lightDirCameraSpace(0.0f, 1.0f, 0.0f);
-	glUniform3fv(dirToLight, 1, *lightDirCameraSpace);
+	Light light(
+		glm::vec4(0.0f, 10.0f, 0.0f, 1.0f), // position
+		glm::vec3(0.8f, 0.8f, 0.8f), // ambient
+		glm::vec3(0.3f, 0.3f, 0.3f), // diffuse
+		glm::vec3(0.2f, 0.2f, 0.2f) // specular
+	);
+	light.program(program_);
+
+	Material material(
+		glm::vec3(0.5f, 0.5f, 0.5f), // ambient
+		glm::vec3(0.4f, 0.6f, 0.9f), // diffuse
+		glm::vec3(0.3f, 0.3f, 0.3f), // specular
+		0.5f // shininess
+	);
+	material.program(program_);
 
 	program_->disable();
 
@@ -143,11 +143,28 @@ void Renderer::draw(Hookah::Window * window)
 
 	program_->enable();
 
+	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
+
+	// [TODO] - these uniforms only need changed with the underlying data changes
+	// e.g., no need to update the view matrix if the camera's view hasn't changed since the last frame
 	unsigned int viewMatrix = program_->uniform("viewMatrix");
-	v3D::Matrix4 view;
-	scene_->camera()->createView();
+	glm::mat4 view;
 	view = scene_->camera()->view();
-	glUniformMatrix4fv(viewMatrix, 1, GL_TRUE, *view);
+	glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, glm::value_ptr(view));
+
+	// lighting
+	/*
+	unsigned int dirToLight = program_->uniform("dirToLight");
+	glm::vec4 lightDirection(0.0f, 1.0f, 0.0f, 0.0f);
+	*/
+	// world-to-camera matrix is the transpose inverse of the view matrix
+	glm::mat4 worldToCam = glm::transpose(glm::inverse(view));
+	unsigned int normalMatrix = program_->uniform("normalMatrix");
+	glUniformMatrix3fv(normalMatrix, 1, GL_FALSE, glm::value_ptr(worldToCam));
+	/*
+	glm::vec4 lightDirCameraSpace = worldToCam * lightDirection;
+	glUniform3fv(dirToLight, 1, glm::value_ptr(lightDirCameraSpace));
+	*/
 
 	drawMesh(scene_->mesh());
 
@@ -193,4 +210,20 @@ void Renderer::drawMesh(boost::shared_ptr<Mesh> mesh)
 void Renderer::resize(int width, int height)
 {
 	glViewport(0, 0, width, height);
+
+	// update the aspect ratio of the camera & reload the projection matrix
+	scene_->camera()->perspective(
+		90.0f, // x fov
+		static_cast<float>(width) / static_cast<float>(height), // aspect
+		0.1f, // near
+		1000.0f // far
+	);
+	glm::mat4 projection;
+	projection = scene_->camera()->projection();
+	unsigned int projectionMatrix = program_->uniform("projectionMatrix");
+	// location, count, transpose, data
+	program_->enable();
+	glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
+	program_->disable();
+
 }

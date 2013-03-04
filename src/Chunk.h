@@ -24,5 +24,6 @@ class Chunk
 	private:
 		std::vector<Voxel> blocks_;
 		bool dirty_;
+		bool empty_;
 		unsigned int size_;
 };

@@ -11,7 +11,8 @@
 
 #include <log4cxx/logger.h>
 
-Program::Program(std::vector<boost::shared_ptr<Shader>> & shaders)
+Program::Program(std::vector<boost::shared_ptr<Shader>> & shaders) :
+	enabled_(false)
 {
 	id_ = glCreateProgram();
 
@@ -53,18 +54,30 @@ Program::~Program()
 
 void Program::enable()
 {
-	glUseProgram(id_);
+	if (!enabled_)
+	{
+		glUseProgram(id_);
+		enabled_ = true;
+	}
 }
 
 void Program::disable()
 {
-	glUseProgram(0);
+	if (enabled_)
+	{
+		glUseProgram(0);
+		enabled_ = false;
+	}
 }
 
 unsigned int Program::uniform(const std::string & name)
 {
 	if (uniforms_.find(name) == uniforms_.end())
 	{
+		if (!enabled_)
+		{
+			enable();
+		}
 		uniforms_[name] = glGetUniformLocation(id_, name.c_str());
 	}
 	return uniforms_[name];

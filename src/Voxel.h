@@ -12,7 +12,7 @@
 #include "Normal.h"
 #include "Mesh.h"
 
-#include <3dtypes/Vector3.h>
+#include <glm/glm.hpp>
 
 #include <boost/shared_ptr.hpp>
 
@@ -56,7 +56,7 @@ class Voxel
 		/**
 		 * Default constructor
 		 */
-		Voxel(BlockType type, const v3D::Vector3 & position);
+		Voxel(BlockType type, const glm::vec3 & position);
 
 		/**
 		 * Generate vertex data
@@ -71,13 +71,13 @@ class Voxel
 		 * Generate a vertex from a vector
 		 *
 		 */
-		Vertex vertex(const v3D::Vector3 & vec);
-		Normal normal(const v3D::Vector3 & vec);
-		Color color(const v3D::Vector3 & vec);
+		Vertex vertex(const glm::vec3 & vec);
+		Normal normal(const glm::vec3 & vec);
+		Color color(const glm::vec3 & vec);
 		/**
 		 * Add a vertex to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
-		unsigned int createFaceVertex(boost::shared_ptr<Mesh> mesh, const v3D::Vector3 & position, unsigned int drawFaces, unsigned int inFaces);
+		unsigned int createFaceVertex(boost::shared_ptr<Mesh> mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces);
 		/**
 		 * Add a tri to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
@@ -90,6 +90,6 @@ class Voxel
 
 	private:
 		BlockType type_;
-		v3D::Vector3 position_;
+		glm::vec3 position_;
 		bool active_;
 };

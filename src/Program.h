@@ -46,4 +46,5 @@ class Program
 	private:
 		unsigned int id_;
 		std::map<std::string, unsigned int> uniforms_;
+		bool enabled_;
 };

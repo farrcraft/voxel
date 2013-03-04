@@ -2,7 +2,8 @@
 
 Chunk::Chunk() :
 	dirty_(false),
-	size_(16)
+	size_(16),
+	empty_(false)
 {
 	// chunk is a volume cube of size_ voxels per dimension
 	//unsigned int count = size_ * size_ * size_;
@@ -13,7 +14,7 @@ Chunk::Chunk() :
 		{
 			for (unsigned z = 0; z < size_; z++)
 			{
-				v3D::Vector3 position((float) x, (float) y, (float) z);
+				glm::vec3 position((float) x, (float) y, (float) z);
 				Voxel::BlockType type = Voxel::BLOCK_TYPE_AIR;
 				// not doing any generation yet - just enable every other block in the chunk for now
 				if (x % 2 == 0 && y % 2 == 0 && z % 2 == 0)

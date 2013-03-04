@@ -26,7 +26,7 @@ Controller::Controller(const std::string & path) :
 	directory_.reset(new v3D::CommandDirectory());
 
 	// create new app window and set caption
-	window_ = Hookah::Create3DWindow(512, 512);
+	window_ = Hookah::Create3DWindow(1024, 768);
 
 	// create input devices
 	// NB - dynamic_pointer_cast appears to be a replacement for shared_dynamic_cast
@@ -42,6 +42,8 @@ Controller::Controller(const std::string & path) :
 	window_->addInputDevice("mouse", mouse_);
 
 	window_->caption("Voxel");
+	// hide the mouse cursor in the window
+	window_->cursor(false);
 
 	// load config file into a property tree
 	boost::property_tree::ptree ptree;

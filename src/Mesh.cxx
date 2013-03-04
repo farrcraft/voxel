@@ -37,7 +37,8 @@ std::vector<Color> & Mesh::colors()
 	return colors_;
 }
 
-std::vector<Normal> & Mesh::normals(){
+std::vector<Normal> & Mesh::normals()
+{
 	return normals_;
 }
 
