@@ -16,11 +16,13 @@
 #include <boost/bind.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include <log4cxx/logger.h>
+
 
 Controller::Controller(const std::string & path) : 
 	path_(path)
 {
-	AssetLoader loader(path);
+	boost::shared_ptr<AssetLoader> loader(new AssetLoader(path));
 
 	// create a new command directory object
 	directory_.reset(new v3D::CommandDirectory());
@@ -42,8 +44,11 @@ Controller::Controller(const std::string & path) :
 	window_->addInputDevice("mouse", mouse_);
 
 	window_->caption("Voxel");
+
 	// hide the mouse cursor in the window
 	window_->cursor(false);
+	// move mouse cursor to center of window
+	window_->warpCursor(window_->width() / 2, window_->height() / 2);
 
 	// load config file into a property tree
 	boost::property_tree::ptree ptree;
@@ -79,6 +84,8 @@ Controller::Controller(const std::string & path) :
 	// register event listeners
 	window_->addDrawListener(boost::bind(&Renderer::draw, boost::ref(renderer_), _1));
 	window_->addResizeListener(boost::bind(&Renderer::resize, boost::ref(renderer_), _1, _2));
+	window_->addTickListener(boost::bind(&Scene::tick, boost::ref(scene_), _1));
+
 }
 
 bool Controller::run()
@@ -138,27 +145,16 @@ bool Controller::execUI(const v3D::CommandInfo & command, const std::string & pa
 
 void Controller::motion(unsigned int x, unsigned int y)
 {
-	v3D::Vector2ui position(x, y);
+	unsigned int centerX = window_->width() / 2;
+	unsigned int centerY = window_->height() / 2;
 
-	if (x > last_[0])
-	{
-		scene_->player()->look(Player::LOOK_RIGHT);
-	}
-	else if (x < last_[0])
-	{
-		scene_->player()->look(Player::LOOK_LEFT);
-	}
+	int yDelta = y - centerY;
+	int xDelta = x - centerX;
+	float pitch = static_cast<float>(yDelta);
+	float heading = static_cast<float>(xDelta);
 
-	if (y > last_[1])
-	{
-		scene_->player()->look(Player::LOOK_UP);
-	}
-	else if (y < last_[1])
-	{
-		scene_->player()->look(Player::LOOK_DOWN);
-	}
-
-	last_ = position;
+	scene_->player()->look(heading, pitch);
+	window_->warpCursor(centerX, centerY);
 }
 
 void Controller::buttonPressed(unsigned int button)

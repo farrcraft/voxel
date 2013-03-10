@@ -6,11 +6,12 @@
  */
 
 #pragma once
-
-#include "Vertex.h"
-#include "Color.h"
-#include "Normal.h"
-#include "Mesh.h"
+/*
+#include "../engine/Vertex.h"
+#include "../engine/Color.h"
+#include "../engine/Normal.h"
+*/
+#include "../engine/Mesh.h"
 
 #include <glm/glm.hpp>
 
@@ -68,13 +69,6 @@ class Voxel
 
 	protected:
 		/**
-		 * Generate a vertex from a vector
-		 *
-		 */
-		Vertex vertex(const glm::vec3 & vec);
-		Normal normal(const glm::vec3 & vec);
-		Color color(const glm::vec3 & vec);
-		/**
 		 * Add a vertex to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
 		unsigned int createFaceVertex(boost::shared_ptr<Mesh> mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces);
@@ -82,8 +76,6 @@ class Voxel
 		 * Add a tri to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
 		void createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces);
-
-		Color color();
 
 		bool active() const;
 		void active(bool enabled);

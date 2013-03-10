@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Camera.h"
+#include "engine/Camera.h"
 
 Scene::Scene()
 {
@@ -31,3 +31,9 @@ boost::shared_ptr<Mesh> Scene::mesh()
 {
 	return mesh_;
 }
+
+void Scene::tick(unsigned int delta)
+{
+	player_->tick(delta);
+}
+

@@ -41,21 +41,19 @@ class Player
 			LOOK_RIGHT	= 16
 		} Look;
 
+		void tick(unsigned int delta);
+
 		boost::shared_ptr<Camera> camera();
 
 		glm::vec3 position() const;
 		void position(const glm::vec3 & pos);
 
 		void move(Movement direction);
-		void look(Look direction);
-
-	protected:
-		glm::vec3 Player::checkMoveDirection(unsigned int check, Movement direction, unsigned int axis, float magnitude);
+		void look(float heading, float pitch);
 
 	private:
 		glm::vec3 position_;
 		boost::shared_ptr<Camera> camera_;
-		float verticalLookAngle_;
 		std::vector<Item> inventory_;
 		unsigned int movement_;
 };

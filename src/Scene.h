@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "Player.h"
-#include "GameState.h"
-#include "Chunk.h"
+#include "game/Player.h"
+#include "game/GameState.h"
+#include "voxel/Chunk.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -17,6 +17,8 @@ class Scene
 {
 	public:
 		Scene();
+
+		void tick(unsigned int delta);
 
 		boost::shared_ptr<Player> player();
 		boost::shared_ptr<GameState> state();

@@ -15,8 +15,6 @@
 #include <gui/InputEventAdapter.h>
 #include <command/CommandDirectory.h>
 
-#include <3dtypes/Vector.h>
-
 #include <boost/shared_ptr.hpp>
 
 #include <string>
@@ -55,7 +53,6 @@ class Controller :
 
 		boost::shared_ptr<v3D::KeyboardDevice> keyboard_;
 		boost::shared_ptr<v3D::MouseDevice> mouse_;
-		v3D::Vector2ui last_;
 
 		boost::shared_ptr<v3D::CommandDirectory> directory_;
 		boost::shared_ptr<v3D::InputEventAdapter> listenerAdapter_;

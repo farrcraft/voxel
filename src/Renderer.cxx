@@ -6,41 +6,51 @@
  */
 
 #include "Renderer.h"
-#include "Program.h"
+#include "AssetLoader.h"
+#include "engine/Program.h"
 #include "Scene.h"
-#include "Camera.h"
-#include "Light.h"
-#include "Material.h"
+#include "engine/Camera.h"
+#include "engine/Light.h"
+#include "engine/Material.h"
+#include "engine/VertexBuffer.h"
+
+#include "font/TextBuffer.h"
+#include "font/TextureFont.h"
+#include "font/FontCache.h"
+#include "font/TextureAtlas.h"
 
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <log4cxx/logger.h>
 
 
-Renderer::Renderer(boost::shared_ptr<Scene> scene, AssetLoader loader) : 
+Renderer::Renderer(boost::shared_ptr<Scene> scene, boost::shared_ptr<AssetLoader> loader) : 
 	scene_(scene)
 {
 	// setup shaders
+	boost::shared_ptr<Program> voxelProgram;
+
 	std::vector<boost::shared_ptr<Shader>> shaders;
 	boost::shared_ptr<Shader> shader;
 
 	std::string script;
-	script = loader.load("shader_v2.vert");
+	script = loader->load("shader_v2.vert");
 	shader.reset(new Shader (GL_VERTEX_SHADER, script));
 	shaders.push_back(shader);
 
-	script = loader.load("shader_v2.frag");
+	script = loader->load("shader_v2.frag");
 	shader.reset(new Shader(GL_FRAGMENT_SHADER, script));
 	shaders.push_back(shader);
 
-	program_.reset(new Program(shaders));
+	voxelProgram.reset(new Program(shaders));
 
 	// setup shader program uniforms
-	program_->enable();
+	voxelProgram->enable();
 
 	// camera & model matrices
 	glm::mat4 model(1.0f);
-	unsigned int modelMatrix = program_->uniform("modelMatrix");
+	unsigned int modelMatrix = voxelProgram->uniform("modelMatrix");
 	glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, glm::value_ptr(model));
 
 	// lighting
@@ -57,97 +67,95 @@ Renderer::Renderer(boost::shared_ptr<Scene> scene, AssetLoader loader) :
 		glm::vec3(0.3f, 0.3f, 0.3f), // diffuse
 		glm::vec3(0.2f, 0.2f, 0.2f) // specular
 	);
-	light.program(program_);
+	light.program(voxelProgram);
 
 	Material material(
 		glm::vec3(0.5f, 0.5f, 0.5f), // ambient
-		glm::vec3(0.4f, 0.6f, 0.9f), // diffuse
-		glm::vec3(0.3f, 0.3f, 0.3f), // specular
+		glm::vec3(0.8f, 0.8f, 0.8f), // diffuse
+		glm::vec3(0.4f, 0.6f, 0.9f), // specular
 		0.5f // shininess
 	);
-	material.program(program_);
+	material.program(voxelProgram);
 
-	program_->disable();
+	voxelProgram->disable();
+	programs_["voxel"] = voxelProgram;
 
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);
 
 	boost::shared_ptr<Mesh> mesh = scene_->mesh();
-	unsigned int vbo = createVertexBuffer(mesh);
-	mesh->addBuffer("vbo", vbo);
-
-	unsigned int ebo = createIndexBuffer(mesh->tris());
-	mesh->addBuffer("ebo", ebo);
+	buffer_.reset(new VertexBuffer(mesh));
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);
+	// CCW winding is default
+	glFrontFace(GL_CCW);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0f, 1.0f);
 	glEnable(GL_DEPTH_CLAMP);
-}
 
+	// setup the shader program for text rendering
+	std::vector<boost::shared_ptr<Shader>> textShaders;
+	boost::shared_ptr<Program> textProgram;
 
-unsigned int Renderer::createIndexBuffer(const std::vector<unsigned int> & data)
-{
-	unsigned int ebo;
-	glGenBuffers(1, &ebo);
-	// NB - ebo's are bound to the vao so the vao must already be bound
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data.size() * sizeof(unsigned int), &data[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	script = loader->load("text.vert");
+	shader.reset(new Shader (GL_VERTEX_SHADER, script));
+	textShaders.push_back(shader);
 
-	return ebo;
-}
+	script = loader->load("text.frag");
+	shader.reset(new Shader(GL_FRAGMENT_SHADER, script));
+	textShaders.push_back(shader);
 
-unsigned int Renderer::createVertexBuffer(boost::shared_ptr<Mesh> mesh)
-{
-	unsigned int vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	textProgram.reset(new Program(textShaders));
+	programs_["text"] = textProgram;
 
-	std::vector<Vertex> & vertices = mesh->vertices();
-	std::vector<Color> & colors = mesh->colors();
-	std::vector<Normal> & normals = mesh->normals();
+	// setup text buffer
+	text_.reset(new TextBuffer(textProgram, TextBuffer::LCD_FILTERING_ON));
+	TextBuffer::Markup markup;
+	markup.bold_ = false;
+	markup.italic_ = false;
+	markup.rise_ = 0.0f;
+	markup.spacing_ = 0.0f;
+	markup.gamma_ = 1.5f;
+	markup.underline_ = false;
+	markup.overline_ = false;
+	markup.strikethrough_ = false;
+	markup.foregroundColor_ = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	markup.backgroundColor_ = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+	markup.size_ = 24.0f;
+	std::string filename = loader->path() + std::string("Vera.ttf");
+	markup.font_.reset(new TextureFont(text_->cache()->atlas(), filename, markup.size_));
+	// characters to cache
+    const wchar_t *cache = L" !\"#$%&'()*+,-./0123456789:;<=>?"
+                           L"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
+                           L"`abcdefghijklmnopqrstuvwxyz{|}~";
+	markup.font_->loadGlyphs(cache);
 
-	size_t vertexSize = sizeof(Vertex) * vertices.size();
-	size_t colorSize = sizeof(Color) * colors.size();
-	size_t normalSize = sizeof(Normal) * normals.size();
-
-	size_t bufferSize = vertexSize + colorSize + normalSize;
-
-	// allocate buffer
-	glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
-	// fill buffer with mesh data
-	unsigned int offset = 0;
-	glBufferSubData(GL_ARRAY_BUFFER, offset, vertexSize, &vertices[0]);
-	offset += vertexSize;
-	glBufferSubData(GL_ARRAY_BUFFER, offset, colorSize, &colors[0]);
-	offset += colorSize;
-	glBufferSubData(GL_ARRAY_BUFFER, offset, normalSize, &normals[0]);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	return vbo;
+	glm::vec2 pen(20.0f, 200.0f);
+	text_->addText(pen, markup, L"Now is the time for all good men");
+	text_->upload();
+	std::string atlas("atlas.bmp");
+	text_->cache()->atlas()->write(atlas);
 }
 
 
 void Renderer::draw(Hookah::Window * window)
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	program_->enable();
+	boost::shared_ptr<Program> program = programs_["voxel"];
+	program->enable();
 
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 
 	// [TODO] - these uniforms only need changed with the underlying data changes
 	// e.g., no need to update the view matrix if the camera's view hasn't changed since the last frame
-	unsigned int viewMatrix = program_->uniform("viewMatrix");
+	unsigned int viewMatrix = program->uniform("viewMatrix");
 	glm::mat4 view;
 	view = scene_->camera()->view();
 	glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, glm::value_ptr(view));
@@ -159,53 +167,20 @@ void Renderer::draw(Hookah::Window * window)
 	*/
 	// world-to-camera matrix is the transpose inverse of the view matrix
 	glm::mat4 worldToCam = glm::transpose(glm::inverse(view));
-	unsigned int normalMatrix = program_->uniform("normalMatrix");
+	unsigned int normalMatrix = program->uniform("normalMatrix");
 	glUniformMatrix3fv(normalMatrix, 1, GL_FALSE, glm::value_ptr(worldToCam));
 	/*
 	glm::vec4 lightDirCameraSpace = worldToCam * lightDirection;
 	glUniform3fv(dirToLight, 1, glm::value_ptr(lightDirCameraSpace));
 	*/
 
-	drawMesh(scene_->mesh());
+	buffer_->render();
 
-	program_->disable();
+	program->disable();
+
+	// render text
+	text_->render();
 }
-
-
-void Renderer::drawMesh(boost::shared_ptr<Mesh> mesh)
-{
-	unsigned int ebo = mesh->buffer("ebo");
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-
-	unsigned int vbo = mesh->buffer("vbo");
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-	// vertex attributes
-	glEnableVertexAttribArray(0);
-	// color attributes
-	glEnableVertexAttribArray(1);
-	// normal attributes
-	glEnableVertexAttribArray(2);
-
-	size_t colorData = mesh->vertices().size() * sizeof(Vertex);
-	size_t normalData = colorData + (mesh->colors().size() * sizeof(Color));
-	// attribute, # of elements, element type, transpose?, offset between elements, offset of first element
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Color), reinterpret_cast<void*>(colorData));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), reinterpret_cast<void*>(normalData));
-
-	// a single color value is used for entire cubes and only one normal for every pair of tris (per cube face)
-	glVertexAttribDivisor(1, 36);
-	glVertexAttribDivisor(2, 6);
-
-	unsigned int indices = mesh->tris().size();
-	glDrawElements(GL_TRIANGLES, indices, GL_UNSIGNED_INT, reinterpret_cast<void*>(0));
-
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	glDisableVertexAttribArray(2);
-}
-
 
 void Renderer::resize(int width, int height)
 {
@@ -220,10 +195,18 @@ void Renderer::resize(int width, int height)
 	);
 	glm::mat4 projection;
 	projection = scene_->camera()->projection();
-	unsigned int projectionMatrix = program_->uniform("projectionMatrix");
+	boost::shared_ptr<Program> voxelProgram = programs_["voxel"];
+	voxelProgram->enable();
+	unsigned int projectionMatrix = voxelProgram->uniform("projectionMatrix");
 	// location, count, transpose, data
-	program_->enable();
 	glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
-	program_->disable();
+	voxelProgram->disable();
+
+	boost::shared_ptr<Program> textProgram = programs_["text"];
+	textProgram->enable();
+	unsigned int MVPMatrix = textProgram->uniform("MVPMatrix");
+	glm::mat4 mvp = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height), -1.0f, 1.0f);
+	glUniformMatrix4fv(MVPMatrix, 1, GL_FALSE, glm::value_ptr(mvp));
+	textProgram->disable();
 
 }

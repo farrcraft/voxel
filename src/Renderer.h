@@ -7,8 +7,7 @@
 
 #pragma once
 
-#include "Voxel.h"
-#include "AssetLoader.h"
+#include "voxel/Voxel.h"
 
 #include <hookah/Window.h>
 
@@ -16,6 +15,9 @@
 
 class Program;
 class Scene;
+class AssetLoader;
+class VertexBuffer;
+class TextBuffer;
 
 /**
  * Main engine renderer
@@ -26,7 +28,7 @@ class Renderer
 		/**
 		 * Default Constructor
 		 */
-		Renderer(boost::shared_ptr<Scene> scene, AssetLoader loader);
+		Renderer(boost::shared_ptr<Scene> scene, boost::shared_ptr<AssetLoader> loader);
 
 		/**
 		 * Draw the frame
@@ -38,17 +40,12 @@ class Renderer
 		void resize(int width, int height);
 
 	protected:
-
-		unsigned int createIndexBuffer(const std::vector<unsigned int> & data);
-		unsigned int createVertexBuffer(boost::shared_ptr<Mesh> mesh);
-
 		void drawMesh(boost::shared_ptr<Mesh> mesh);
 
 	private:
-		boost::shared_ptr<Program> program_;
-
-		unsigned int vbo_;
+		std::map<std::string, boost::shared_ptr<Program> > programs_;
+		boost::shared_ptr<VertexBuffer> buffer_;
 		unsigned int vao_;
-
+		boost::shared_ptr<TextBuffer> text_;
 		boost::shared_ptr<Scene> scene_;
 };

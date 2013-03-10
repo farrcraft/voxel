@@ -16,6 +16,11 @@ AssetLoader::AssetLoader(const std::string & path) :
 {
 }
 
+std::string AssetLoader::path() const
+{
+	return path_;
+}
+
 std::string AssetLoader::load(const std::string & filename)
 {
 	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));

@@ -25,6 +25,8 @@ class AssetLoader
 		 */
 		std::string load(const std::string & filename);
 
+		std::string path() const;
+
 	private:
 		std::string path_;
 };

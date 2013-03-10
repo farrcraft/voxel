@@ -52,13 +52,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\;C:\local_code\vendor\freetype-2.4.11\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\Release Library\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -71,56 +71,61 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\;C:\local_code\vendor\freetype-2.4.11\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\Release Library\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\AssetLoader.cxx" />
-    <ClCompile Include="..\..\src\Camera.cxx" />
-    <ClCompile Include="..\..\src\Chunk.cxx" />
     <ClCompile Include="..\..\src\Controller.cxx" />
-    <ClCompile Include="..\..\src\GameState.cxx" />
-    <ClCompile Include="..\..\src\Item.cxx" />
-    <ClCompile Include="..\..\src\Light.cxx" />
+    <ClCompile Include="..\..\src\engine\Camera.cxx" />
+    <ClCompile Include="..\..\src\engine\Light.cxx" />
+    <ClCompile Include="..\..\src\engine\Material.cxx" />
+    <ClCompile Include="..\..\src\engine\Mesh.cxx" />
+    <ClCompile Include="..\..\src\engine\Program.cxx" />
+    <ClCompile Include="..\..\src\engine\Shader.cxx" />
+    <ClCompile Include="..\..\src\engine\VertexBuffer.cxx" />
+    <ClCompile Include="..\..\src\font\FontCache.cxx" />
+    <ClCompile Include="..\..\src\font\TextBuffer.cxx" />
+    <ClCompile Include="..\..\src\font\TextureAtlas.cxx" />
+    <ClCompile Include="..\..\src\font\TextureFont.cxx" />
+    <ClCompile Include="..\..\src\game\GameState.cxx" />
+    <ClCompile Include="..\..\src\game\Item.cxx" />
+    <ClCompile Include="..\..\src\game\Player.cxx" />
     <ClCompile Include="..\..\src\main.cxx" />
-    <ClCompile Include="..\..\src\Material.cxx" />
-    <ClCompile Include="..\..\src\Mesh.cxx" />
-    <ClCompile Include="..\..\src\Player.cxx" />
-    <ClCompile Include="..\..\src\Program.cxx" />
     <ClCompile Include="..\..\src\Renderer.cxx" />
     <ClCompile Include="..\..\src\Scene.cxx" />
-    <ClCompile Include="..\..\src\Shader.cxx" />
-    <ClCompile Include="..\..\src\Vertex.cxx" />
-    <ClCompile Include="..\..\src\Voxel.cxx" />
+    <ClCompile Include="..\..\src\voxel\Chunk.cxx" />
+    <ClCompile Include="..\..\src\voxel\Voxel.cxx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\AssetLoader.h" />
-    <ClInclude Include="..\..\src\Camera.h" />
-    <ClInclude Include="..\..\src\Chunk.h" />
-    <ClInclude Include="..\..\src\Color.h" />
     <ClInclude Include="..\..\src\Controller.h" />
-    <ClInclude Include="..\..\src\GameState.h" />
-    <ClInclude Include="..\..\src\Item.h" />
-    <ClInclude Include="..\..\src\Light.h" />
-    <ClInclude Include="..\..\src\Material.h" />
-    <ClInclude Include="..\..\src\Mesh.h" />
-    <ClInclude Include="..\..\src\Normal.h" />
-    <ClInclude Include="..\..\src\Player.h" />
-    <ClInclude Include="..\..\src\Program.h" />
+    <ClInclude Include="..\..\src\engine\Camera.h" />
+    <ClInclude Include="..\..\src\engine\Light.h" />
+    <ClInclude Include="..\..\src\engine\Material.h" />
+    <ClInclude Include="..\..\src\engine\Mesh.h" />
+    <ClInclude Include="..\..\src\engine\Program.h" />
+    <ClInclude Include="..\..\src\engine\Shader.h" />
+    <ClInclude Include="..\..\src\engine\VertexBuffer.h" />
+    <ClInclude Include="..\..\src\font\FontCache.h" />
+    <ClInclude Include="..\..\src\font\TextBuffer.h" />
+    <ClInclude Include="..\..\src\font\TextureAtlas.h" />
+    <ClInclude Include="..\..\src\font\TextureFont.h" />
+    <ClInclude Include="..\..\src\game\GameState.h" />
+    <ClInclude Include="..\..\src\game\Item.h" />
+    <ClInclude Include="..\..\src\game\Player.h" />
     <ClInclude Include="..\..\src\Renderer.h" />
-    <ClInclude Include="..\..\src\Scene.h" />
-    <ClInclude Include="..\..\src\Shader.h" />
-    <ClInclude Include="..\..\src\Vertex.h" />
-    <ClInclude Include="..\..\src\Voxel.h" />
+    <ClInclude Include="..\..\src\voxel\Chunk.h" />
+    <ClInclude Include="..\..\src\voxel\Voxel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ChangeLog.txt" />
