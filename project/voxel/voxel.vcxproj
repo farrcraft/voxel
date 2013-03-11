@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\AssetLoader.cxx" />
     <ClCompile Include="..\..\src\Controller.cxx" />
+    <ClCompile Include="..\..\src\DebugOverlay.cxx" />
     <ClCompile Include="..\..\src\engine\Camera.cxx" />
     <ClCompile Include="..\..\src\engine\Light.cxx" />
     <ClCompile Include="..\..\src\engine\Material.cxx" />
@@ -109,6 +110,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\AssetLoader.h" />
     <ClInclude Include="..\..\src\Controller.h" />
+    <ClInclude Include="..\..\src\DebugOverlay.h" />
     <ClInclude Include="..\..\src\engine\Camera.h" />
     <ClInclude Include="..\..\src\engine\Light.h" />
     <ClInclude Include="..\..\src\engine\Material.h" />

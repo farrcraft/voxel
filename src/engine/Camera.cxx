@@ -89,6 +89,16 @@ const glm::vec3 &Camera::zAxis() const
 	return zAxis_; 
 }
 
+bool Camera::dirty() const
+{
+	return dirty_;
+}
+
+void Camera::dirty(bool status)
+{
+	dirty_ = status;
+}
+
 void Camera::lookAt(const glm::vec3 &target)
 {
     lookAt(eye_, target, yAxis_);
@@ -123,6 +133,8 @@ void Camera::lookAt(const glm::vec3 &eye, const glm::vec3 &target, const glm::ve
 
     // Extract the pitch angle from the view matrix.
 	pitch_ = glm::degrees(-asinf(view_[1][2]));
+
+	dirty_ = true;
 }
 
 void Camera::move(float dx, float dy, float dz)
@@ -508,4 +520,6 @@ void Camera::updateViewMatrix(bool orthogonalizeAxes)
     view_[1][3] = 0.0f;
     view_[2][3] = 0.0f;
     view_[3][3] = 1.0f;
+
+	dirty_ = true;
 }

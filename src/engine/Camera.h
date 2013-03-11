@@ -43,6 +43,7 @@ class Camera
 		const glm::vec3 &xAxis() const;
 		const glm::vec3 &yAxis() const;
 		const glm::vec3 &zAxis() const;
+		bool dirty() const;
     
 		void acceleration(float x, float y, float z);
 		void acceleration(const glm::vec3 &acceleration);
@@ -53,6 +54,7 @@ class Camera
 		void position(const glm::vec3 &position);
 		void velocity(float x, float y, float z);
 		void velocity(const glm::vec3 &velocity);
+		void dirty(bool status);
 
 	protected:
 		void rotateFlight(float headingDegrees, float pitchDegrees, float rollDegrees);
@@ -77,4 +79,5 @@ class Camera
 		glm::vec3 velocity_;
 		glm::mat4 view_;
 		glm::mat4 projection_;
+		bool dirty_;
 };

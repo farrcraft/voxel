@@ -1,11 +1,13 @@
 #include "VertexBuffer.h"
 #include "Mesh.h"
 
+#include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 
 VertexBuffer::VertexBuffer(boost::shared_ptr<Mesh> mesh) :
 	ebo_(0),
-	vbo_(0)
+	vbo_(0),
+	type_(BUFFER_TYPE_STATIC)
 {
 
 	attribute(0, 3, ATTRIBUTE_TYPE_VERTEX, mesh->vertices().size());
@@ -22,7 +24,8 @@ VertexBuffer::VertexBuffer(boost::shared_ptr<Mesh> mesh) :
 
 VertexBuffer::VertexBuffer() :
 	ebo_(0),
-	vbo_(0)
+	vbo_(0),
+	type_(BUFFER_TYPE_DYNAMIC)
 {
 }
 
@@ -60,16 +63,35 @@ void VertexBuffer::attribute(unsigned int position, unsigned int size, Attribute
 void VertexBuffer::indices(const std::vector<unsigned int> & data)
 {
 	indices_ = data.size();
-	glGenBuffers(1, &ebo_);
+	if (ebo_ == 0)
+	{
+		glGenBuffers(1, &ebo_);
+	}
+	GLenum usage;
+	switch (type_)
+	{
+		case BUFFER_TYPE_STATIC:
+			usage = GL_STATIC_DRAW;
+			break;
+		case BUFFER_TYPE_DYNAMIC:
+			usage = GL_DYNAMIC_DRAW;
+			break;
+		default:
+			usage = GL_STATIC_DRAW;
+			break;
+	}
 	// NB - ebo's are bound to the vao so the vao must already be bound
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_ * sizeof(unsigned int), &data[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_ * sizeof(unsigned int), &data[0], usage);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void VertexBuffer::allocate()
 {
-	glGenBuffers(1, &vbo_);
+	if (vbo_ == 0)
+	{
+		glGenBuffers(1, &vbo_);
+	}
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 
 	size_t bufferSize = 0;
@@ -78,44 +100,51 @@ void VertexBuffer::allocate()
 		bufferSize += attributes_[i].stride_ * attributes_[i].length_;
 	}
 
+	GLenum usage;
+	switch (type_)
+	{
+		case BUFFER_TYPE_STATIC:
+			usage = GL_STATIC_DRAW;
+			break;
+		case BUFFER_TYPE_DYNAMIC:
+			usage = GL_DYNAMIC_DRAW;
+			break;
+		default:
+			usage = GL_STATIC_DRAW;
+			break;
+	}
+
 	// allocate buffer
-	glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, bufferSize, NULL, usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void VertexBuffer::data1f(unsigned int attr, const std::vector<float> & data)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-	unsigned int offset = attributes_[attr].offset_;
-	size_t size = attributes_[attr].stride_ * data.size();
-	glBufferSubData(GL_ARRAY_BUFFER, offset, size, &data[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	set(attr, &data[0], data.size());
 }
 
 void VertexBuffer::data2f(unsigned int attr, const std::vector<glm::vec2> & data)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-	unsigned int offset = attributes_[attr].offset_;
-	size_t size = attributes_[attr].stride_ * data.size();
-	glBufferSubData(GL_ARRAY_BUFFER, offset, size, &data[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	set(attr, glm::value_ptr(data[0]), data.size());
 }
 
 void VertexBuffer::data3f(unsigned int attr, const std::vector<glm::vec3> & data)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-	unsigned int offset = attributes_[attr].offset_;
-	size_t size = attributes_[attr].stride_ * data.size();
-	glBufferSubData(GL_ARRAY_BUFFER, offset, size, &data[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	set(attr, glm::value_ptr(data[0]), data.size());
 }
 
 void VertexBuffer::data4f(unsigned int attr, const std::vector<glm::vec4> & data)
 {
+	set(attr, glm::value_ptr(data[0]), data.size());
+}
+
+void VertexBuffer::set(unsigned int attr, const float * data, size_t size)
+{
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_);
 	unsigned int offset = attributes_[attr].offset_;
-	size_t size = attributes_[attr].stride_ * data.size();
-	glBufferSubData(GL_ARRAY_BUFFER, offset, size, &data[0]);
+	size_t byteSize = attributes_[attr].stride_ * size;
+	glBufferSubData(GL_ARRAY_BUFFER, offset, byteSize, data);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 

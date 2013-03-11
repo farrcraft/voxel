@@ -20,7 +20,8 @@
 
 
 Controller::Controller(const std::string & path) : 
-	path_(path)
+	path_(path),
+	debug_(false)
 {
 	boost::shared_ptr<AssetLoader> loader(new AssetLoader(path));
 
@@ -66,6 +67,8 @@ Controller::Controller(const std::string & path) :
 	directory_->add("look", "voxel", boost::bind(&Controller::exec, boost::ref(*this), _1, _2));
 	// ui commands
 	directory_->add("showGameMenu", "ui", boost::bind(&Controller::execUI, boost::ref(*this), _1, _2));
+	// debug commands
+	directory_->add("debug", "voxel", boost::bind(&Controller::exec, boost::ref(*this), _1, _2));
 
 	// load key binds from the property tree
 	v3D::utility::load_binds(ptree, directory_.get());
@@ -99,30 +102,38 @@ bool Controller::exec(const v3D::CommandInfo & command, const std::string & para
 	{
 		return false;
 	}
+	std::string commandName = command.name();
 
-	if (command.name() == "moveForward")
+	// player commands
+	if (commandName == "moveForward")
 	{
 		scene_->player()->move(Player::MOVE_FORWARD);
 	}
-	else if (command.name() == "moveBackward")
+	else if (commandName == "moveBackward")
 	{
 		scene_->player()->move(Player::MOVE_BACKWARD);
 	}
-	else if (command.name() == "moveLeft")
+	else if (commandName == "moveLeft")
 	{
 		scene_->player()->move(Player::MOVE_LEFT);
 	}
-	else if (command.name() == "moveRight")
+	else if (commandName == "moveRight")
 	{
 		scene_->player()->move(Player::MOVE_RIGHT);
 	}
-	else if (command.name() == "moveUp")
+	else if (commandName == "moveUp")
 	{
 		scene_->player()->move(Player::MOVE_UP);
 	}
-	else if (command.name() == "moveDown")
+	else if (commandName == "moveDown")
 	{
 		scene_->player()->move(Player::MOVE_DOWN);
+	}
+	// debug commands
+	else if (commandName == "debug")
+	{
+		debug_ = !debug_;
+		renderer_->debug(debug_);
 	}
 
 	return false;

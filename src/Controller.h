@@ -61,4 +61,6 @@ class Controller :
 		boost::shared_ptr<Scene> scene_;
 
 		std::string path_;
+
+		bool debug_;
 };

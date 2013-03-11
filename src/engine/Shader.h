@@ -15,10 +15,16 @@
 class Shader
 {
 	public:
+		typedef enum
+		{
+			SHADER_TYPE_FRAGMENT = 2,
+			SHADER_TYPE_VERTEX = 4
+		} ShaderType;
+
 		/**
 		 * Create a new GLSL shader
 		 */
-		Shader(unsigned int type, const std::string & shader);
+		Shader(ShaderType type, const std::string & shader);
 		~Shader();
 
 		/**
@@ -31,6 +37,6 @@ class Shader
 		void detach(unsigned int program);
 
 	private:
-		unsigned int type_;
+		ShaderType type_;
 		unsigned int id_;
 };

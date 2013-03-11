@@ -31,6 +31,12 @@ class VertexBuffer
 			unsigned int offset_;
 		} VertexAttribute;
 
+		typedef enum
+		{
+			BUFFER_TYPE_STATIC,
+			BUFFER_TYPE_DYNAMIC
+		} BufferType;
+
 		VertexBuffer(boost::shared_ptr<Mesh> mesh);
 		VertexBuffer();
 		~VertexBuffer();
@@ -47,9 +53,13 @@ class VertexBuffer
 		void indices(const std::vector<unsigned int> & data);
 		void allocate();
 
+	protected:
+		void set(unsigned int attr, const float * data, size_t size);
+
 	private:
 		unsigned int ebo_;
 		unsigned int vbo_;
 		std::vector<VertexAttribute> attributes_;
 		unsigned int indices_;
+		BufferType type_;
 };

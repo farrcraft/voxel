@@ -177,6 +177,14 @@ void TextBuffer::addText(glm::vec2 & pen, const Markup & markup, const std::wstr
 
 void TextBuffer::clear()
 {
+	// reset all of the underlying vertex buffer data sources
+	xyz_.clear();
+	rgba_.clear();
+	uv_.clear();
+	shift_.clear();
+	gamma_.clear();
+	items_.clear();
+	indices_.clear();
 }
 
 void TextBuffer::render()

@@ -14,8 +14,10 @@ class FontCache
 		FontCache(unsigned int width, unsigned int height, unsigned int depth);
 		~FontCache();
 
-		void load(const std::string & filename, float size);
-		void remove(boost::shared_ptr<TextureFont> font);
+		void charcodes(const wchar_t * charcodes);
+
+		boost::shared_ptr<TextureFont> load(const std::string & filename, float size);
+		bool remove(boost::shared_ptr<TextureFont> font);
 
 		boost::shared_ptr<TextureAtlas> atlas();
 

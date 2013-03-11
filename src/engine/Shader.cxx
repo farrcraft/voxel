@@ -14,11 +14,24 @@
 #include <fstream>
 #include <iostream>
 
-Shader::Shader(unsigned int type, const std::string & shader) : 
+Shader::Shader(ShaderType type, const std::string & shader) : 
 	type_(type), 
 	id_(0)
 {
-	id_ = glCreateShader(type_);
+	GLenum shaderType;
+	switch (type_)
+	{
+		case SHADER_TYPE_VERTEX:
+			shaderType = GL_VERTEX_SHADER;
+			break;
+		case SHADER_TYPE_FRAGMENT:
+			shaderType = GL_FRAGMENT_SHADER;
+			break;
+		default:
+			shaderType = GL_VERTEX_SHADER;
+			break;
+	}
+	id_ = glCreateShader(shaderType);
 	const char *data = shader.c_str();
 	glShaderSource(id_, 1, &data, NULL);
 
@@ -34,21 +47,21 @@ Shader::Shader(unsigned int type, const std::string & shader) :
 		GLchar *infoLog = new GLchar[infoLogLength + 1];
 		glGetShaderInfoLog(id_, infoLogLength, NULL, infoLog);
 
-		std::string shaderType;
-		switch(type)
+		std::string shaderTypeName;
+		switch(shaderType)
 		{
 			case GL_VERTEX_SHADER: 
-				shaderType = "vertex"; 
+				shaderTypeName = "vertex"; 
 				break;
 			case GL_GEOMETRY_SHADER: 
-				shaderType = "geometry"; 
+				shaderTypeName = "geometry"; 
 				break;
 			case GL_FRAGMENT_SHADER: 
-				shaderType = "fragment"; 
+				shaderTypeName = "fragment"; 
 				break;
 		}
 
-		std::string msg = std::string("Compile failure in ") + shaderType + std::string(" shader: ") + std::string(infoLog);
+		std::string msg = std::string("Compile failure in ") + shaderTypeName + std::string(" shader: ") + std::string(infoLog);
 		delete[] infoLog;
 		log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
 		LOG4CXX_ERROR(logger, msg);

@@ -27,30 +27,37 @@ boost::shared_ptr<TextureAtlas> FontCache::atlas()
 	return atlas_;
 }
 
-void FontCache::load(const std::string & filename, float size)
+void FontCache::charcodes(const wchar_t * charcodes)
 {
-	boost::shared_ptr<TextureFont> font;
+	delete [] cache_;
+	cache_ = wcsdupstr(charcodes);
+}
 
+boost::shared_ptr<TextureFont> FontCache::load(const std::string & filename, float size)
+{
 	for (unsigned int i = 0; i < fonts_.size(); ++i)
 	{
 		if (fonts_[i]->filename() == filename && fonts_[i]->size() == size)
 		{
-			return;
+			return fonts_[i];
 		}
 	}
+	boost::shared_ptr<TextureFont> font;
 	font.reset(new TextureFont(atlas_, filename, size));
 	font->loadGlyphs(cache_);
 	fonts_.push_back(font);
+	return font;
 }
 
-void FontCache::remove(boost::shared_ptr<TextureFont> font)
+bool FontCache::remove(boost::shared_ptr<TextureFont> font)
 {
 	for (unsigned int i = 0; i < fonts_.size(); ++i)
 	{
 		if (fonts_[i]->filename() == font->filename() && fonts_[i]->size() == font->size())
 		{
 			fonts_.erase(fonts_.begin() + i);
-			return;
+			return true;
 		}
 	}
+	return false;
 }

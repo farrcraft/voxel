@@ -17,7 +17,7 @@ class Program;
 class Scene;
 class AssetLoader;
 class VertexBuffer;
-class TextBuffer;
+class DebugOverlay;
 
 /**
  * Main engine renderer
@@ -39,13 +39,18 @@ class Renderer
 		 */
 		void resize(int width, int height);
 
+		void debug(bool status);
+
 	protected:
 		void drawMesh(boost::shared_ptr<Mesh> mesh);
+
+		boost::shared_ptr<Program> createProgram(unsigned int shaderTypes, const std::string & name, boost::shared_ptr<AssetLoader> loader);
 
 	private:
 		std::map<std::string, boost::shared_ptr<Program> > programs_;
 		boost::shared_ptr<VertexBuffer> buffer_;
 		unsigned int vao_;
-		boost::shared_ptr<TextBuffer> text_;
 		boost::shared_ptr<Scene> scene_;
+		bool debug_;
+		boost::shared_ptr<DebugOverlay> debugOverlay_;
 };
