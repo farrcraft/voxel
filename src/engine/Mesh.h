@@ -24,6 +24,9 @@ class Mesh
 
 		unsigned int findVertex(const glm::vec3 & vertex);
 
+		unsigned int addVertex(const glm::vec3 & vertex, const glm::vec3 & normal);
+		unsigned int findVertex(const glm::vec3 & vertex, const glm::vec3 & normal);
+
 		std::vector<glm::vec3> & vertices();
 		std::vector<unsigned int> & tris();
 		std::vector<glm::vec3> & normals();

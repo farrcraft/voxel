@@ -22,6 +22,6 @@ class Material
 	private:
 		glm::vec3 ambient_;
 		glm::vec3 specular_;
-		glm::vec3 diffuse_;
+		glm::vec3 diffuse_;  // material color
 		float shininess_;
 };

@@ -76,6 +76,10 @@ class Voxel
 		 * Add a tri to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
 		void createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces);
+		/**
+		 * Create a quad face from four corner vertices and a surface normal. A pair of tri faces are generated in the process.
+		 */
+		void createFace(boost::shared_ptr<Mesh> mesh, unsigned int drawFaces, unsigned int inFaces, const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3, const glm::vec3 & normal);
 
 		bool active() const;
 		void active(bool enabled);

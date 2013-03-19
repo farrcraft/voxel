@@ -88,6 +88,7 @@ Controller::Controller(const std::string & path) :
 	window_->addDrawListener(boost::bind(&Renderer::draw, boost::ref(renderer_), _1));
 	window_->addResizeListener(boost::bind(&Renderer::resize, boost::ref(renderer_), _1, _2));
 	window_->addTickListener(boost::bind(&Scene::tick, boost::ref(scene_), _1));
+	window_->addTickListener(boost::bind(&Renderer::tick, boost::ref(renderer_), _1));
 
 }
 

@@ -1,3 +1,10 @@
+/**
+ * Voxel Engine
+ *
+ * (c) Joshua Farr <j.wgasa@gmail.com>
+ *
+ */
+
 #include "TextBuffer.h"
 #include "FontCache.h"
 #include "TextureAtlas.h"
@@ -7,6 +14,7 @@
 
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <log4cxx/logger.h>
 
 TextBuffer::TextBuffer(boost::shared_ptr<Program> program, unsigned int depth) :
 	program_(program),
@@ -27,10 +35,14 @@ void TextBuffer::addCharacter(glm::vec2 & pen, const Markup & markup, wchar_t cu
 	if (current == L'\n')
 	{
 		pen.x = origin_.x;
-		pen.y += static_cast<int>(descender_);
+		pen.y += markup.font_->height() - markup.font_->descender();
+		/*
 		descender_ = 0.0f;
 		ascender_ = 0.0f;
+		*/
 		lineStart_ = items_.size();
+		// newlines don't actually generate any vertex data
+		return;
 	}
 	boost::shared_ptr<TextureFont::Glyph> glyph = markup.font_->glyph(current);
 	boost::shared_ptr<TextureFont::Glyph> black = markup.font_->glyph(-1);
@@ -88,8 +100,8 @@ void TextBuffer::addCharacter(glm::vec2 & pen, const Markup & markup, wchar_t cu
 	}
 
 	// actual glyph
-	glm::vec2 xy0(pen.x + glyph->offset_.x, (int)(pen.y + glyph->offset_.y));
-	glm::vec2 xy1(xy0.x + glyph->width_, (int)(xy0.y - glyph->height_));
+	glm::vec2 xy0(pen.x + glyph->offset_.x, (int)(pen.y + glyph->height_ - glyph->offset_.y));
+	glm::vec2 xy1(xy0.x + glyph->width_, (int)(xy0.y - glyph->offset_.y));
 
 	addQuad(xy0, xy1, glyph->st_[0], glyph->st_[1], markup.foregroundColor_, markup.gamma_);
 
@@ -104,17 +116,20 @@ void TextBuffer::addQuad(const glm::vec2 & xy0, const glm::vec2 & xy1, const glm
 {
 	unsigned int vcount = xyz_.size();
 
-	addVertex(glm::vec3(xy0.x, xy0.y, 0.0f), glm::vec2(uv0.s, uv0.t), color, xy0.x - ((int)xy0.x), gamma);
-	addVertex(glm::vec3(xy0.x, xy1.y, 0.0f), glm::vec2(uv0.s, uv1.t), color, xy0.x - ((int)xy0.x), gamma);
-	addVertex(glm::vec3(xy1.x, xy1.y, 0.0f), glm::vec2(uv1.s, uv1.t), color, xy1.x - ((int)xy1.x), gamma);
-	addVertex(glm::vec3(xy1.x, xy0.y, 0.0f), glm::vec2(uv1.s, uv0.t), color, xy1.x - ((int)xy1.x), gamma);
+	// uv[0,1].t are flipped so y(0) can be top of screen (otherwise texture is upside down)
+	addVertex(glm::vec3(xy0.x, xy0.y, 0.0f), glm::vec2(uv0.s, uv1.t), color, xy0.x - ((int)xy0.x), gamma);
+	addVertex(glm::vec3(xy0.x, xy1.y, 0.0f), glm::vec2(uv0.s, uv0.t), color, xy0.x - ((int)xy0.x), gamma);
+	addVertex(glm::vec3(xy1.x, xy1.y, 0.0f), glm::vec2(uv1.s, uv0.t), color, xy1.x - ((int)xy1.x), gamma);
+	addVertex(glm::vec3(xy1.x, xy0.y, 0.0f), glm::vec2(uv1.s, uv1.t), color, xy1.x - ((int)xy1.x), gamma);
 
+	// Use CCW winding so that the ortho matrix can put y(0) at the top of the screen
+	// CW winding tri indices would be (0, 1, 2), (0, 2, 3)
 	indices_.push_back(vcount);
+	indices_.push_back(vcount+2);
 	indices_.push_back(vcount+1);
-	indices_.push_back(vcount+2);
 	indices_.push_back(vcount);
-	indices_.push_back(vcount+2);
 	indices_.push_back(vcount+3);
+	indices_.push_back(vcount+2);
 }
 
 void TextBuffer::addVertex(glm::vec3 position, glm::vec2 texture, glm::vec4 color, float shift, float gamma)
@@ -147,10 +162,18 @@ void TextBuffer::upload()
 
 void TextBuffer::addText(glm::vec2 & pen, const Markup & markup, const std::wstring & text)
 {
+	/*
+	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
+	std::stringstream msg;
+	msg << "Textbuffer ascender: " << ascender_ << " descender: " << descender_;
+	msg << " Font ascender: " << markup.font_->ascender() << " descender: " << markup.font_->descender();
+	LOG4CXX_INFO(logger, msg.str());
+	*/
 	if (xyz_.size() == 0)
 	{
 		origin_ = pen;
 	}
+	/*
 	if (markup.font_->ascender() > ascender_)
 	{
 		float dy = markup.font_->ascender() - ascender_;
@@ -168,6 +191,7 @@ void TextBuffer::addText(glm::vec2 & pen, const Markup & markup, const std::wstr
 	{
 		descender_ = markup.font_->descender();
 	}
+	*/
 	addCharacter(pen, markup, text[0], 0);
 	for (unsigned int i = 1; i < text.length(); ++i)
 	{

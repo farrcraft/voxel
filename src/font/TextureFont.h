@@ -1,3 +1,10 @@
+/**
+ * Voxel Engine
+ *
+ * (c) Joshua Farr <j.wgasa@gmail.com>
+ *
+ */
+
 #pragma once
 
 #include <glm/glm.hpp>

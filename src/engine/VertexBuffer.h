@@ -1,3 +1,10 @@
+/**
+ * Voxel Engine
+ *
+ * (c) Joshua Farr <j.wgasa@gmail.com>
+ *
+ */
+
 #pragma once
 
 #include <glm/glm.hpp>
@@ -7,7 +14,7 @@
 class Mesh;
 
 /**
- * 
+ * A class for GPU buffer data
  */
 class VertexBuffer
 {

@@ -1,3 +1,10 @@
+/**
+ * Voxel Engine
+ *
+ * (c) Joshua Farr <j.wgasa@gmail.com>
+ *
+ */
+
 #include "VertexBuffer.h"
 #include "Mesh.h"
 
@@ -51,13 +58,31 @@ void VertexBuffer::attribute(unsigned int position, unsigned int size, Attribute
 	attr.stride_ = sizeof(float) * size;
 
 	size_t offset = 0;
-	for (unsigned int i = 0; i < position; i++)
+	bool exists = false;
+	unsigned int index;
+	for (unsigned int i = 0; i < attributes_.size(); i++)
 	{
-		offset += attributes_[i].stride_ * attributes_[i].length_;
+		if (attributes_[i].position_ < position)
+		{
+			offset += attributes_[i].stride_ * attributes_[i].length_;
+		}
+		if (attributes_[i].position_ == position)
+		{
+			exists = true;
+			index = i;
+		}
 	}
 	attr.offset_ = offset;
 
-	attributes_.push_back(attr);
+	// if the attribute in the same poisition has previously been set then just replace the old version
+	if (exists)
+	{
+		attributes_[index] = attr;
+	}
+	else
+	{
+		attributes_.push_back(attr);
+	}
 }
 
 void VertexBuffer::indices(const std::vector<unsigned int> & data)

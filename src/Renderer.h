@@ -39,6 +39,8 @@ class Renderer
 		 */
 		void resize(int width, int height);
 
+		void tick(unsigned int delta);
+
 		void debug(bool status);
 
 	protected:

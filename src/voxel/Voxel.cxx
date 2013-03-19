@@ -20,11 +20,11 @@ Voxel::Voxel(BlockType type, const glm::vec3 & position) :
 
 unsigned int Voxel::createFaceVertex(boost::shared_ptr<Mesh> mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces)
 {
-	if (drawFaces & inFaces) 
+	if (!(drawFaces & inFaces))
 	{
-		return mesh->addVertex(position);
+		return -1;
 	}
-	return -1;
+	return mesh->addVertex(position);
 }
 
 void Voxel::createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces)
@@ -33,6 +33,21 @@ void Voxel::createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigne
 	{
 		mesh->addTri(v1, v2, v3);
 	}
+}
+
+void Voxel::createFace(boost::shared_ptr<Mesh> mesh, unsigned int drawFaces, unsigned int inFaces, const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3, const glm::vec3 & normal)
+{
+	if (!(drawFaces & inFaces))
+	{
+		return;
+	}
+	unsigned int p0 = mesh->addVertex(v0, normal);
+	unsigned int p1 = mesh->addVertex(v1, normal);
+	unsigned int p2 = mesh->addVertex(v2, normal);
+	unsigned int p3 = mesh->addVertex(v3, normal);
+
+	createFaceTri(mesh, p0, p1, p2, drawFaces, inFaces);
+	createFaceTri(mesh, p0, p2, p3, drawFaces, inFaces);
 }
 
 void Voxel::generate(boost::shared_ptr<Mesh> mesh, unsigned int faces)
@@ -61,48 +76,48 @@ void Voxel::generate(boost::shared_ptr<Mesh> mesh, unsigned int faces)
 	glm::vec3 p5(width, -height, -length);
 	glm::vec3 p6(width, height, -length);
 	glm::vec3 p7(-width, height, -length);
-	// front
-	unsigned int v0 = createFaceVertex(mesh, p0 + position_, faces, (BLOCK_FACE_FRONT|BLOCK_FACE_LEFT|BLOCK_FACE_BOTTOM));
-	unsigned int v1 = createFaceVertex(mesh, p1 + position_, faces, (BLOCK_FACE_FRONT|BLOCK_FACE_RIGHT|BLOCK_FACE_BOTTOM));
-	unsigned int v2 = createFaceVertex(mesh, p2 + position_, faces, (BLOCK_FACE_FRONT|BLOCK_FACE_RIGHT|BLOCK_FACE_TOP));
-	unsigned int v3 = createFaceVertex(mesh, p3 + position_, faces, (BLOCK_FACE_FRONT|BLOCK_FACE_LEFT|BLOCK_FACE_TOP));
-	// back
-	unsigned int v4 = createFaceVertex(mesh, p4 + position_, faces, (BLOCK_FACE_BACK|BLOCK_FACE_LEFT|BLOCK_FACE_BOTTOM));
-	unsigned int v5 = createFaceVertex(mesh, p5 + position_, faces, (BLOCK_FACE_BACK|BLOCK_FACE_RIGHT|BLOCK_FACE_BOTTOM));
-	unsigned int v6 = createFaceVertex(mesh, p6 + position_, faces, (BLOCK_FACE_BACK|BLOCK_FACE_RIGHT|BLOCK_FACE_TOP));
-	unsigned int v7 = createFaceVertex(mesh, p7 + position_, faces, (BLOCK_FACE_BACK|BLOCK_FACE_LEFT|BLOCK_FACE_TOP));
 
-	// counter-clockwise winding
-	// front - pos z
-	createFaceTri(mesh, v0, v1, v2, faces, BLOCK_FACE_FRONT);
-	createFaceTri(mesh, v0, v2, v3, faces, BLOCK_FACE_FRONT);
-	// right - pos x
-	createFaceTri(mesh, v1, v5, v6, faces, BLOCK_FACE_RIGHT);
-	createFaceTri(mesh, v1, v6, v2, faces, BLOCK_FACE_RIGHT);
-	// top - pos y
-	createFaceTri(mesh, v2, v6, v7, faces, BLOCK_FACE_TOP);
-	createFaceTri(mesh, v2, v7, v3, faces, BLOCK_FACE_TOP);
+	createFace(mesh, faces, BLOCK_FACE_FRONT, 
+		p0 + position_, 
+		p1 + position_, 
+		p2 + position_, 
+		p3 + position_, 
+		glm::vec3(0.0f, 0.0f, 1.0f));
 
-	// clockwise winding
-	// left - neg x
-	createFaceTri(mesh, v3, v4, v0, faces, BLOCK_FACE_LEFT);
-	createFaceTri(mesh, v3, v7, v4, faces, BLOCK_FACE_LEFT);
-	// bottom - neg y
-	createFaceTri(mesh, v4, v5, v1, faces, BLOCK_FACE_BOTTOM);
-	createFaceTri(mesh, v4, v1, v0, faces, BLOCK_FACE_BOTTOM);
-	// back - neg z
-	createFaceTri(mesh, v5, v7, v6, faces, BLOCK_FACE_BACK);
-	createFaceTri(mesh, v5, v4, v7, faces, BLOCK_FACE_BACK);
+	createFace(mesh, faces, BLOCK_FACE_RIGHT, 
+		p1 + position_, 
+		p5 + position_, 
+		p6 + position_, 
+		p2 + position_, 
+		glm::vec3(1.0f, 0.0f, 0.0f));
 
-	mesh->addNormal(glm::vec3(0.0f, 0.0f, 1.0f));
-	mesh->addNormal(glm::vec3(1.0f, 0.0f, 0.0f));
-	mesh->addNormal(glm::vec3(0.0f, 1.0f, 0.0f));
-	mesh->addNormal(glm::vec3(-1.0f, 0.0f, 0.0f));
-	mesh->addNormal(glm::vec3(0.0f, -1.0f, 0.0f));
-	mesh->addNormal(glm::vec3(0.0f, 0.0f, -1.0f));
-	// extra junk normals to match vertex count
-	mesh->addNormal(glm::vec3(1.0f, 0.0f, 0.0f));
-	mesh->addNormal(glm::vec3(1.0f, 0.0f, 0.0f));
+	createFace(mesh, faces, BLOCK_FACE_TOP, 
+		p2 + position_, 
+		p6 + position_, 
+		p7 + position_, 
+		p3 + position_, 
+		glm::vec3(0.0f, 1.0f, 0.0f));
+
+	createFace(mesh, faces, BLOCK_FACE_LEFT, 
+		p4 + position_, 
+		p0 + position_, 
+		p3 + position_, 
+		p7 + position_, 
+		glm::vec3(-1.0f, 0.0f, 0.0f));
+
+	createFace(mesh, faces, BLOCK_FACE_BOTTOM, 
+		p4 + position_, 
+		p5 + position_, 
+		p1 + position_, 
+		p0 + position_, 
+		glm::vec3(0.0f, -1.0f, 0.0f));
+
+	createFace(mesh, faces, BLOCK_FACE_BACK, 
+		p5 + position_, 
+		p4 + position_, 
+		p7 + position_, 
+		p6 + position_, 
+		glm::vec3(0.0f, 0.0f, -1.0f));
 }
 
 bool Voxel::active() const

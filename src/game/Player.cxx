@@ -98,5 +98,6 @@ void Player::tick(unsigned int delta)
 	}
 	float elapsedTimeSec = 0.1f;
 	camera_->updatePosition(dir, elapsedTimeSec);
+	position_ = camera_->position();
 }
 

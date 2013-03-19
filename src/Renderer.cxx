@@ -27,8 +27,34 @@ Renderer::Renderer(boost::shared_ptr<Scene> scene, boost::shared_ptr<AssetLoader
 	scene_(scene),
 	debug_(false)
 {
+	// log GL version info
+	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
+	std::stringstream msg;
+	const GLubyte * renderer = glGetString(GL_RENDERER);
+	const GLubyte * vendor = glGetString(GL_VENDOR);
+	const GLubyte * version = glGetString(GL_VERSION);
+	const GLubyte * glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	msg << "Renderer: " << renderer << std::endl;
+	msg << " Vendor: " << vendor << std::endl;
+	msg << " GL Version: " << version << std::endl;
+	msg << " GLSL: " << glslVersion << std::endl;
+	LOG4CXX_INFO(logger, msg.str());
+
+	// use simple diffuse or ADS lighting?
+	bool adsLighting = true;
+	std::string shaderName;
+
+	if (adsLighting)
+	{
+		shaderName = "shaders/voxel_ads";
+	}
+	else
+	{
+		shaderName = "shaders/voxel_diffuse";
+	}
+
 	// setup shaders
-	boost::shared_ptr<Program> voxelProgram = createProgram(Shader::SHADER_TYPE_VERTEX|Shader::SHADER_TYPE_FRAGMENT, "shader_v2", loader);
+	boost::shared_ptr<Program> voxelProgram = createProgram(Shader::SHADER_TYPE_VERTEX|Shader::SHADER_TYPE_FRAGMENT, shaderName, loader);
 
 	// setup shader program uniforms
 	voxelProgram->enable();
@@ -39,28 +65,41 @@ Renderer::Renderer(boost::shared_ptr<Scene> scene, boost::shared_ptr<AssetLoader
 	glUniformMatrix4fv(modelMatrix, 1, GL_FALSE, glm::value_ptr(model));
 
 	// lighting
-	/*
-	unsigned int lightIntensity = program_->uniform("lightIntensity");
-	unsigned int ambientIntensity = program_->uniform("ambientIntensity");
+	if (adsLighting)
+	{
+		glm::mat4 view = scene_->camera()->view();
+		glm::vec4 pos(0.0f, 100.0f, 0.0f, 1.0f);
+		Light light(
+			view * pos, // position
+			glm::vec3(0.4f, 0.4f, 0.4f), // ambient
+			glm::vec3(1.0f, 1.0f, 1.0f), // diffuse
+			glm::vec3(1.0f, 1.0f, 1.0f) // specular
+		);
+		light.program(voxelProgram);
 
-	glUniform4f(lightIntensity, 0.8f, 0.8f, 0.8f, 1.0f);
-	glUniform4f(ambientIntensity, 0.2f, 0.2f, 0.2f, 1.0f);
-	*/
-	Light light(
-		glm::vec4(0.0f, 10.0f, 0.0f, 1.0f), // position
-		glm::vec3(0.8f, 0.8f, 0.8f), // ambient
-		glm::vec3(0.3f, 0.3f, 0.3f), // diffuse
-		glm::vec3(0.2f, 0.2f, 0.2f) // specular
-	);
-	light.program(voxelProgram);
+		Material material(
+			glm::vec3(0.9f, 0.5f, 0.3f), // ambient
+			glm::vec3(0.9f, 0.5f, 0.3f), // diffuse
+			glm::vec3(0.8f, 0.8f, 0.8f), // specular
+			100.0f // shininess
+		);
+		material.program(voxelProgram);
+	}
+	else
+	{
+		// simple diffuse shading
+		// uniforms:
+		// LightPosition (in eye coordinates)
+		// Kd - diffuse reflectivity
+		// Ld - light source intensity
+		unsigned int LightPosition = voxelProgram->uniform("LightPosition");
+		unsigned int Ld = voxelProgram->uniform("Ld");
+		unsigned int Kd = voxelProgram->uniform("Kd");
 
-	Material material(
-		glm::vec3(0.5f, 0.5f, 0.5f), // ambient
-		glm::vec3(0.8f, 0.8f, 0.8f), // diffuse
-		glm::vec3(0.4f, 0.6f, 0.9f), // specular
-		0.5f // shininess
-	);
-	material.program(voxelProgram);
+		glUniform4fv(LightPosition, 1, glm::value_ptr(glm::vec4(0.0f, 100.0f, 0.0f, 1.0f)));
+		glUniform3fv(Ld, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+		glUniform3fv(Kd, 1, glm::value_ptr(glm::vec3(0.6f, 0.5f, 0.2f)));
+	}
 
 	voxelProgram->disable();
 	programs_["voxel"] = voxelProgram;
@@ -73,20 +112,20 @@ Renderer::Renderer(boost::shared_ptr<Scene> scene, boost::shared_ptr<AssetLoader
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	// CCW winding is default
-	glFrontFace(GL_CCW);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LEQUAL);
 	glDepthRange(0.0f, 1.0f);
 	glEnable(GL_DEPTH_CLAMP);
+	// CCW winding is default
+	glFrontFace(GL_CCW);
 
 	// setup the shader program for text rendering
-	boost::shared_ptr<Program> textProgram = createProgram(Shader::SHADER_TYPE_VERTEX|Shader::SHADER_TYPE_FRAGMENT, "text", loader);
+	boost::shared_ptr<Program> textProgram = createProgram(Shader::SHADER_TYPE_VERTEX|Shader::SHADER_TYPE_FRAGMENT, "shaders/text", loader);
 	programs_["text"] = textProgram;
 
-	debugOverlay_.reset(new DebugOverlay(textProgram, loader));
+	debugOverlay_.reset(new DebugOverlay(scene_, textProgram, loader));
 }
 
 boost::shared_ptr<Program> Renderer::createProgram(unsigned int shaderTypes, const std::string & name, boost::shared_ptr<AssetLoader> loader)
@@ -117,12 +156,14 @@ boost::shared_ptr<Program> Renderer::createProgram(unsigned int shaderTypes, con
 
 void Renderer::draw(Hookah::Window * window)
 {
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.4f, 0.6f, 0.9f, 1.0f);
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	boost::shared_ptr<Program> program = programs_["voxel"];
 	program->enable();
+	
+	glVertexAttribDivisor(1, 0);
 
 	glProvokingVertex(GL_FIRST_VERTEX_CONVENTION);
 
@@ -133,19 +174,11 @@ void Renderer::draw(Hookah::Window * window)
 		view = scene_->camera()->view();
 		glUniformMatrix4fv(viewMatrix, 1, GL_FALSE, glm::value_ptr(view));
 
-		// lighting
-		/*
-		unsigned int dirToLight = program_->uniform("dirToLight");
-		glm::vec4 lightDirection(0.0f, 1.0f, 0.0f, 0.0f);
-		*/
 		// world-to-camera matrix is the transpose inverse of the view matrix
 		glm::mat4 worldToCam = glm::transpose(glm::inverse(view));
 		unsigned int normalMatrix = program->uniform("normalMatrix");
 		glUniformMatrix3fv(normalMatrix, 1, GL_FALSE, glm::value_ptr(worldToCam));
-		/*
-		glm::vec4 lightDirCameraSpace = worldToCam * lightDirection;
-		glUniform3fv(dirToLight, 1, glm::value_ptr(lightDirCameraSpace));
-		*/
+
 		scene_->camera()->dirty(false);
 	}
 
@@ -157,6 +190,14 @@ void Renderer::draw(Hookah::Window * window)
 	if (debug_)
 	{
 		debugOverlay_->render();
+	}
+}
+
+void Renderer::tick(unsigned int delta)
+{
+	if (debug_)
+	{
+		debugOverlay_->update(delta);
 	}
 }
 
@@ -183,7 +224,7 @@ void Renderer::resize(int width, int height)
 	boost::shared_ptr<Program> textProgram = programs_["text"];
 	textProgram->enable();
 	unsigned int MVPMatrix = textProgram->uniform("MVPMatrix");
-	glm::mat4 mvp = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height), -1.0f, 1.0f);
+	glm::mat4 mvp = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -1.0f, 1.0f);
 	glUniformMatrix4fv(MVPMatrix, 1, GL_FALSE, glm::value_ptr(mvp));
 	textProgram->disable();
 }
