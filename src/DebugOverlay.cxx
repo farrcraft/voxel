@@ -13,6 +13,7 @@
 #include "font/TextureFont.h"
 #include "font/FontCache.h"
 #include "font/TextureAtlas.h"
+#include "game/Player.h"
 
 #include <string>
 #include <sstream>

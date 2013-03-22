@@ -15,6 +15,8 @@
 #include <string>
 #include <map>
 
+class AssetLoader;
+
 /**
  * A GLSL shader program
  */
@@ -24,7 +26,8 @@ class Program
 		/**
 		 * Construct a new program a collection of shaders
 		 */
-		Program(std::vector<boost::shared_ptr<Shader>> & shaders);
+		Program(std::vector<boost::shared_ptr<Shader>> & theShaders);
+		Program(unsigned int shaderTypes, const std::string & name, boost::shared_ptr<AssetLoader> loader);
 		~Program();
 
 		/**
@@ -42,6 +45,9 @@ class Program
 		 *
 		 */
 		unsigned int uniform(const std::string & name);
+
+	protected:
+		void shaders(std::vector<boost::shared_ptr<Shader>> & theShaders);
 
 	private:
 		unsigned int id_;

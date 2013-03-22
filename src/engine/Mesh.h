@@ -9,9 +9,8 @@
 
 #include <glm/glm.hpp>
 
-#include <vector>
+#include <list>
 #include <string>
-#include <map>
 
 class Mesh
 {
@@ -27,12 +26,12 @@ class Mesh
 		unsigned int addVertex(const glm::vec3 & vertex, const glm::vec3 & normal);
 		unsigned int findVertex(const glm::vec3 & vertex, const glm::vec3 & normal);
 
-		std::vector<glm::vec3> & vertices();
-		std::vector<unsigned int> & tris();
-		std::vector<glm::vec3> & normals();
+		std::list<glm::vec3> & vertices();
+		std::list<glm::ivec3> & tris();
+		std::list<glm::vec3> & normals();
 
 	private:
-		std::vector<unsigned int> tris_;
-		std::vector<glm::vec3> vertices_;
-		std::vector<glm::vec3> normals_;
+		std::list<glm::ivec3> tris_;
+		std::list<glm::vec3> vertices_;
+		std::list<glm::vec3> normals_;
 };

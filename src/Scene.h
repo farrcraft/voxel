@@ -7,11 +7,14 @@
 
 #pragma once
 
-#include "game/Player.h"
-#include "game/GameState.h"
-#include "voxel/Chunk.h"
-
 #include <boost/shared_ptr.hpp>
+#include <vector>
+#include <boost/unordered_map.hpp>
+
+class Chunk;
+class GameState;
+class Player;
+class Camera;
 
 class Scene
 {
@@ -23,11 +26,11 @@ class Scene
 		boost::shared_ptr<Player> player();
 		boost::shared_ptr<GameState> state();
 		boost::shared_ptr<Camera> camera();
-		boost::shared_ptr<Mesh> mesh();
+
+		boost::unordered_map<unsigned int, boost::shared_ptr<Chunk> > & chunks();
 
 	private:
 		boost::shared_ptr<Player> player_;
 		boost::shared_ptr<GameState> state_;
-		boost::shared_ptr<Mesh> mesh_;
-		boost::shared_ptr<Chunk> chunk_;
+		boost::unordered_map<unsigned int, boost::shared_ptr<Chunk> > chunks_;
 };

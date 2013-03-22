@@ -65,21 +65,21 @@ class Voxel
 		 * @param mesh generate the voxel vertex data into this mesh
 		 * @param faces specify which block faces should be generated
 		 */
-		void generate(boost::shared_ptr<Mesh> mesh, unsigned int faces);
+		void generate(boost::shared_ptr<Mesh> & mesh, unsigned int faces);
 
 	protected:
 		/**
 		 * Add a vertex to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
-		unsigned int createFaceVertex(boost::shared_ptr<Mesh> mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces);
+		unsigned int createFaceVertex(boost::shared_ptr<Mesh> & mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces);
 		/**
 		 * Add a tri to a mesh only if any of the inFaces bits are set in drawFaces
 		 */
-		void createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces);
+		void createFaceTri(boost::shared_ptr<Mesh> & mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces);
 		/**
 		 * Create a quad face from four corner vertices and a surface normal. A pair of tri faces are generated in the process.
 		 */
-		void createFace(boost::shared_ptr<Mesh> mesh, unsigned int drawFaces, unsigned int inFaces, const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3, const glm::vec3 & normal);
+		void createFace(boost::shared_ptr<Mesh> & mesh, unsigned int drawFaces, unsigned int inFaces, const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3, const glm::vec3 & normal);
 
 		bool active() const;
 		void active(bool enabled);

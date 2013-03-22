@@ -54,13 +54,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\;C:\local_code\vendor\freetype-2.4.11\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\;C:\local_code\vendor\freetype-2.4.11\include\;C:\local_code\vendor\libnoisesrc-1.0.0\noise\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;c:\local_code\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -73,14 +73,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\;C:\local_code\vendor\freetype-2.4.11\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\local_code\vendor\SDL2\include\;C:\local_code\vendor\glew-1.9.0\include;C:\local_code\vendor\boost_1_53_0;C:\local_code\vendor\log4cxx\src\main\include;C:\local_code\v3dlibs\src\;C:\local_code\vendor\glm-0.9.4.2\;C:\local_code\vendor\freetype-2.4.11\include\;C:\local_code\vendor\libnoisesrc-1.0.0\noise\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;c:\local_code\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
@@ -93,6 +93,7 @@
     <ClCompile Include="..\..\src\engine\Light.cxx" />
     <ClCompile Include="..\..\src\engine\Material.cxx" />
     <ClCompile Include="..\..\src\engine\Mesh.cxx" />
+    <ClCompile Include="..\..\src\engine\MortonCode.cxx" />
     <ClCompile Include="..\..\src\engine\Program.cxx" />
     <ClCompile Include="..\..\src\engine\Shader.cxx" />
     <ClCompile Include="..\..\src\engine\VertexBuffer.cxx" />
@@ -104,10 +105,14 @@
     <ClCompile Include="..\..\src\game\Item.cxx" />
     <ClCompile Include="..\..\src\game\Player.cxx" />
     <ClCompile Include="..\..\src\main.cxx" />
+    <ClCompile Include="..\..\src\noise\noiseutils.cpp" />
     <ClCompile Include="..\..\src\Renderer.cxx" />
     <ClCompile Include="..\..\src\Scene.cxx" />
     <ClCompile Include="..\..\src\voxel\Chunk.cxx" />
+    <ClCompile Include="..\..\src\voxel\MeshBuilder.cxx" />
+    <ClCompile Include="..\..\src\voxel\TerrainMap.cxx" />
     <ClCompile Include="..\..\src\voxel\Voxel.cxx" />
+    <ClCompile Include="..\..\src\voxel\World.cxx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\AssetLoader.h" />
@@ -117,6 +122,7 @@
     <ClInclude Include="..\..\src\engine\Light.h" />
     <ClInclude Include="..\..\src\engine\Material.h" />
     <ClInclude Include="..\..\src\engine\Mesh.h" />
+    <ClInclude Include="..\..\src\engine\MortonCode.h" />
     <ClInclude Include="..\..\src\engine\Program.h" />
     <ClInclude Include="..\..\src\engine\Shader.h" />
     <ClInclude Include="..\..\src\engine\VertexBuffer.h" />
@@ -127,14 +133,22 @@
     <ClInclude Include="..\..\src\game\GameState.h" />
     <ClInclude Include="..\..\src\game\Item.h" />
     <ClInclude Include="..\..\src\game\Player.h" />
+    <ClInclude Include="..\..\src\noise\noiseutils.h" />
     <ClInclude Include="..\..\src\Renderer.h" />
     <ClInclude Include="..\..\src\Scene.h" />
     <ClInclude Include="..\..\src\Version.h" />
     <ClInclude Include="..\..\src\voxel\Chunk.h" />
+    <ClInclude Include="..\..\src\voxel\MeshBuilder.h" />
+    <ClInclude Include="..\..\src\voxel\TerrainMap.h" />
     <ClInclude Include="..\..\src\voxel\Voxel.h" />
+    <ClInclude Include="..\..\src\voxel\World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\ChangeLog.txt" />
+    <None Include="..\..\data\shaders\text.frag" />
+    <None Include="..\..\data\shaders\text.vert" />
+    <None Include="..\..\data\shaders\voxel_ads.frag" />
+    <None Include="..\..\data\shaders\voxel_ads.vert" />
     <None Include="..\..\NOTES.txt" />
     <None Include="..\..\TODO.txt" />
   </ItemGroup>

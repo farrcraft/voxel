@@ -11,21 +11,49 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
 
-VertexBuffer::VertexBuffer(boost::shared_ptr<Mesh> mesh) :
+#include <log4cxx/logger.h>
+
+VertexBuffer::VertexBuffer(boost::shared_ptr<Mesh> & mesh) :
 	ebo_(0),
 	vbo_(0),
 	type_(BUFFER_TYPE_STATIC)
 {
-
 	attribute(0, 3, ATTRIBUTE_TYPE_VERTEX, mesh->vertices().size());
 	attribute(1, 3, ATTRIBUTE_TYPE_NORMAL, mesh->normals().size());
 	allocate();
 
-	// fill buffer with mesh data
-	data3f(0, mesh->vertices());
-	data3f(1, mesh->normals());
+	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
+	std::stringstream msg;
 
-	indices(mesh->tris());
+	// fill buffer with mesh data
+	std::list<glm::vec3> vertexList = mesh->vertices();
+	std::vector<glm::vec3> vertices;
+	msg << "reserving " << vertexList.size() << " vertices ";
+	vertices.reserve(vertexList.size());
+	vertices.assign(vertexList.begin(), vertexList.end());
+	data3f(0, vertices);
+
+	std::list<glm::vec3> normalList = mesh->normals();
+	std::vector<glm::vec3> normals;
+	msg << "reserving " << normalList.size() << " normals ";
+	normals.reserve(normalList.size());
+	normals.assign(normalList.begin(), normalList.end());
+	data3f(1, normals);
+
+	std::list<glm::ivec3> triList = mesh->tris();
+	std::vector<unsigned int> tris;
+	msg << "reserving " << triList.size() << " tris " << std::endl;
+	tris.reserve(triList.size() * 3);
+	std::list<glm::ivec3>::iterator tit = triList.begin();
+	for (; tit != triList.end(); tit++)
+	{
+		tris.push_back(tit->x);
+		tris.push_back(tit->y);
+		tris.push_back(tit->z);
+	}
+	indices(tris);
+
+	LOG4CXX_INFO(logger, msg.str());
 }
 
 

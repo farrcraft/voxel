@@ -28,7 +28,7 @@ class Renderer
 		/**
 		 * Default Constructor
 		 */
-		Renderer(boost::shared_ptr<Scene> scene, boost::shared_ptr<AssetLoader> loader);
+		Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoader> & loader);
 
 		/**
 		 * Draw the frame
@@ -42,11 +42,6 @@ class Renderer
 		void tick(unsigned int delta);
 
 		void debug(bool status);
-
-	protected:
-		void drawMesh(boost::shared_ptr<Mesh> mesh);
-
-		boost::shared_ptr<Program> createProgram(unsigned int shaderTypes, const std::string & name, boost::shared_ptr<AssetLoader> loader);
 
 	private:
 		std::map<std::string, boost::shared_ptr<Program> > programs_;

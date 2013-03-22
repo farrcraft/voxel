@@ -9,6 +9,7 @@
 #include "Renderer.h"
 #include "AssetLoader.h"
 #include "Scene.h"
+#include "game/Player.h"
 
 #include <hookah/Hookah.h>
 #include <command/BindLoader.h>
@@ -157,6 +158,10 @@ bool Controller::execUI(const v3D::CommandInfo & command, const std::string & pa
 
 void Controller::motion(unsigned int x, unsigned int y)
 {
+	if (!window_->active())
+	{
+		return;
+	}
 	unsigned int centerX = window_->width() / 2;
 	unsigned int centerY = window_->height() / 2;
 

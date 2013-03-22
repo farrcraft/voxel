@@ -6,12 +6,10 @@ Mesh::Mesh()
 
 void Mesh::addTri(unsigned int a, unsigned int b, unsigned int c)
 {
-	tris_.push_back(a);
-	tris_.push_back(b);
-	tris_.push_back(c);
+	tris_.push_back(glm::ivec3(a, b, c));
 }
 
-std::vector<unsigned int> & Mesh::tris()
+std::list<glm::ivec3> & Mesh::tris()
 {
 	return tris_;
 }
@@ -44,25 +42,33 @@ void Mesh::addNormal(const glm::vec3 & normal)
 	normals_.push_back(normal);
 }
 
-std::vector<glm::vec3> & Mesh::normals()
+std::list<glm::vec3> & Mesh::normals()
 {
 	return normals_;
 }
 
-std::vector<glm::vec3> & Mesh::vertices()
+std::list<glm::vec3> & Mesh::vertices()
 {
 	return vertices_;
 }
 
 unsigned int Mesh::findVertex(const glm::vec3 & vertex)
 {
-	for (unsigned int i = 0; i < vertices_.size(); i++)
+	// for now just short circuit so new vertices are always added
+	// the below vector searches are extremely slow for finding vertices
+	return -1;
+
+	std::list<glm::vec3>::iterator it;
+	unsigned int index = 0;
+	for (it = vertices_.begin(); it != vertices_.end(); it++)
 	{
-		if (vertex == vertices_[i])
+		if (*it == vertex)
 		{
-			return i;
+			return index;
 		}
+		index++;
 	}
+
 	return -1;
 }
 
@@ -71,6 +77,26 @@ unsigned int Mesh::findVertex(const glm::vec3 & vertex, const glm::vec3 & normal
 	// for now just short circuit so new vertices are always added
 	// the below vector searches are extremely slow for finding vertices
 	return -1;
+
+	std::list<glm::vec3>::iterator it = vertices_.begin();
+	unsigned int index = 0;
+	for (; it != vertices_.end(); it++)
+	{
+		if (*it == vertex)
+		{
+			std::list<glm::vec3>::iterator nit = normals_.begin();
+			for (unsigned int i = 0; i < index; i++)
+			{
+				nit++;
+			}
+			if (*nit == normal)
+			{
+				return index;
+			}
+		}
+		index++;
+	}
+
 	/*
 	for (unsigned int i = 0; i < vertices_.size(); i++)
 	{
@@ -83,6 +109,7 @@ unsigned int Mesh::findVertex(const glm::vec3 & vertex, const glm::vec3 & normal
 		}
 	}
 	*/
+	/*
 	size_t size = vertices_.size();
 	if (size == 0)
 	{
@@ -104,6 +131,7 @@ unsigned int Mesh::findVertex(const glm::vec3 & vertex, const glm::vec3 & normal
 			it++;
 		}
 	}
+	*/
 	/*
 	std::vector<glm::vec3>::iterator start = vertices_.begin();
 	std::vector<glm::vec3>::iterator it;

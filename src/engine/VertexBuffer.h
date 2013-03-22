@@ -44,7 +44,7 @@ class VertexBuffer
 			BUFFER_TYPE_DYNAMIC
 		} BufferType;
 
-		VertexBuffer(boost::shared_ptr<Mesh> mesh);
+		VertexBuffer(boost::shared_ptr<Mesh> & mesh);
 		VertexBuffer();
 		~VertexBuffer();
 

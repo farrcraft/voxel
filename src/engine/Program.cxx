@@ -6,19 +6,26 @@
  */
 
 #include "Program.h"
+#include "../AssetLoader.h"
 
 #include <GL/glew.h>
 
 #include <log4cxx/logger.h>
 
-Program::Program(std::vector<boost::shared_ptr<Shader>> & shaders) :
+Program::Program(std::vector<boost::shared_ptr<Shader>> & theShaders) :
 	enabled_(false)
+{
+	shaders(theShaders);
+}
+
+
+void Program::shaders(std::vector<boost::shared_ptr<Shader>> & theShaders)
 {
 	id_ = glCreateProgram();
 
-	for (std::vector<boost::shared_ptr<Shader>>::size_type i = 0; i != shaders.size(); i++)
+	for (std::vector<boost::shared_ptr<Shader>>::size_type i = 0; i != theShaders.size(); i++)
 	{
-		shaders[i]->attach(id_);
+		theShaders[i]->attach(id_);
 	}
 
 	glLinkProgram(id_);
@@ -41,11 +48,37 @@ Program::Program(std::vector<boost::shared_ptr<Shader>> & shaders) :
 		throw std::runtime_error(msg);
 	}
 
-
-	for (std::vector<boost::shared_ptr<Shader>>::size_type i = 0; i != shaders.size(); i++)
+	for (std::vector<boost::shared_ptr<Shader>>::size_type i = 0; i != theShaders.size(); i++)
 	{
-		shaders[i]->detach(id_);
+		theShaders[i]->detach(id_);
 	}
+}
+
+
+Program::Program(unsigned int shaderTypes, const std::string & name, boost::shared_ptr<AssetLoader> loader) :
+	enabled_(false)
+{
+	std::vector<boost::shared_ptr<Shader>> theShaders;
+	boost::shared_ptr<Program> program;
+	std::string script;
+	boost::shared_ptr<Shader> shader;
+
+	if (shaderTypes & Shader::SHADER_TYPE_VERTEX)
+	{
+		std::string filename = name + std::string(".vert");
+		script = loader->load(filename);
+		shader.reset(new Shader(Shader::SHADER_TYPE_VERTEX, script));
+		theShaders.push_back(shader);
+	}
+
+	if (shaderTypes & Shader::SHADER_TYPE_FRAGMENT)
+	{
+		std::string filename = name + std::string(".frag");
+		script = loader->load(filename);
+		shader.reset(new Shader( Shader::SHADER_TYPE_FRAGMENT, script));
+		theShaders.push_back(shader);
+	}
+	shaders(theShaders);
 }
 
 Program::~Program()

@@ -18,7 +18,7 @@ Voxel::Voxel(BlockType type, const glm::vec3 & position) :
 	}
 }
 
-unsigned int Voxel::createFaceVertex(boost::shared_ptr<Mesh> mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces)
+unsigned int Voxel::createFaceVertex(boost::shared_ptr<Mesh> & mesh, const glm::vec3 & position, unsigned int drawFaces, unsigned int inFaces)
 {
 	if (!(drawFaces & inFaces))
 	{
@@ -27,7 +27,7 @@ unsigned int Voxel::createFaceVertex(boost::shared_ptr<Mesh> mesh, const glm::ve
 	return mesh->addVertex(position);
 }
 
-void Voxel::createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces)
+void Voxel::createFaceTri(boost::shared_ptr<Mesh> & mesh, unsigned int v1, unsigned int v2, unsigned int v3, unsigned int drawFaces, unsigned int inFaces)
 {
 	if (drawFaces & inFaces)
 	{
@@ -35,7 +35,7 @@ void Voxel::createFaceTri(boost::shared_ptr<Mesh> mesh, unsigned int v1, unsigne
 	}
 }
 
-void Voxel::createFace(boost::shared_ptr<Mesh> mesh, unsigned int drawFaces, unsigned int inFaces, const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3, const glm::vec3 & normal)
+void Voxel::createFace(boost::shared_ptr<Mesh> & mesh, unsigned int drawFaces, unsigned int inFaces, const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3, const glm::vec3 & normal)
 {
 	if (!(drawFaces & inFaces))
 	{
@@ -50,7 +50,7 @@ void Voxel::createFace(boost::shared_ptr<Mesh> mesh, unsigned int drawFaces, uns
 	createFaceTri(mesh, p0, p2, p3, drawFaces, inFaces);
 }
 
-void Voxel::generate(boost::shared_ptr<Mesh> mesh, unsigned int faces)
+void Voxel::generate(boost::shared_ptr<Mesh> & mesh, unsigned int faces)
 {
 	if (!active_ || (faces & BLOCK_FACE_NONE))
 	{
