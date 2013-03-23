@@ -63,6 +63,7 @@ void MeshBuilder::generateChunk(boost::shared_ptr<Mesh> & mesh, boost::shared_pt
 			{
 				bool ignoreNeighbor = true;
 				glm::ivec3 neighborChunkPosition = chunkPosition;
+				glm::ivec3 neighborBlockPosition = pos;
 				switch (checkFaces[i])
 				{
 					case Voxel::BLOCK_FACE_LEFT:
@@ -70,6 +71,7 @@ void MeshBuilder::generateChunk(boost::shared_ptr<Mesh> & mesh, boost::shared_pt
 						{
 							neighborChunkPosition.x -= 1;
 							ignoreNeighbor = false;
+							neighborBlockPosition.x = 15;
 						}
 						break;
 					case Voxel::BLOCK_FACE_RIGHT:
@@ -79,14 +81,35 @@ void MeshBuilder::generateChunk(boost::shared_ptr<Mesh> & mesh, boost::shared_pt
 							ignoreNeighbor = false;
 						}
 						break;
-					case Voxel::BLOCK_FACE_FRONT:
-
-						break;
 					case Voxel::BLOCK_FACE_BACK:
+						if (pos.z == 0 && chunkPosition.z > 0)
+						{
+							neighborChunkPosition.z -= 1;
+							neighborBlockPosition.z = 15;
+							ignoreNeighbor = false;
+						}
+						break;
+					case Voxel::BLOCK_FACE_FRONT:
+						if (pos.z == chunkSize - 1)
+						{
+							neighborChunkPosition.z += 1;
+							ignoreNeighbor = false;
+						}
 						break;
 					case Voxel::BLOCK_FACE_TOP:
+						if (pos.y == chunkSize - 1)
+						{
+							neighborChunkPosition.y += 1;
+							ignoreNeighbor = false;
+						}
 						break;
 					case Voxel::BLOCK_FACE_BOTTOM:
+						if (pos.y == 0 && chunkPosition.y > 0)
+						{
+							neighborChunkPosition.y -= 1;
+							neighborBlockPosition.y = 15;
+							ignoreNeighbor = false;
+						}
 						break;
 				}
 				if (!ignoreNeighbor)
@@ -95,8 +118,6 @@ void MeshBuilder::generateChunk(boost::shared_ptr<Mesh> & mesh, boost::shared_pt
 					boost::unordered_map<unsigned int, boost::shared_ptr<Chunk > >::iterator neighborChunk = chunks_.find(neighborChunkHash);
 					if (neighborChunk != chunks_.end())
 					{
-						glm::ivec3 neighborBlockPosition = pos;
-						neighborBlockPosition.x = 15;
 						if ((*neighborChunk).second->active(neighborBlockPosition))
 						{
 							faces &= ~checkFaces[i];
