@@ -17,6 +17,7 @@
 #include "engine/Material.h"
 #include "engine/VertexBuffer.h"
 #include "voxel/MeshBuilder.h"
+#include "voxel/ChunkBufferPool.h"
 
 #include <GL/glew.h>
 
@@ -44,14 +45,9 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	msg << " GLSL: " << glslVersion << std::endl;
 	LOG4CXX_INFO(logger, msg.str());
 
-	// use simple diffuse or ADS lighting?
+	// setup shaders
 	std::string shaderName;
 	shaderName = "shaders/voxel_ads";
-	//shaderName = "shaders/voxel_phong";
-	//shaderName = "shaders/voxel_lighting";
-	//shaderName = "shaders/voxel_diffuse";
-
-	// setup shaders
 	boost::shared_ptr<Program> voxelProgram(new Program(Shader::SHADER_TYPE_VERTEX|Shader::SHADER_TYPE_FRAGMENT, shaderName, loader));
 
 	// setup shader program uniforms
@@ -94,10 +90,20 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	glBindVertexArray(vao_);
 
 	// build mesh data from world chunks
-	boost::shared_ptr<Mesh> mesh;
 	MeshBuilder generator(scene_->chunks());
+
+	/*
+	boost::shared_ptr<Mesh> mesh;
 	mesh = generator.build();
 	buffer_.reset(new VertexBuffer(mesh));
+	*/
+	pool_ = generator.build2();
+
+	/*
+	boost::shared_ptr<Surface> surface;
+	surface = generator.buildSurface();
+	buffer_.reset(new VertexBuffer(surface));
+	*/
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -150,7 +156,8 @@ void Renderer::draw(Hookah::Window * window)
 		scene_->camera()->dirty(false);
 	}
 
-	buffer_->render();
+	//buffer_->render();
+	pool_->render();
 
 	program->disable();
 

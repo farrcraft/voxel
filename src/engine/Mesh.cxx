@@ -1,154 +1,107 @@
 #include "Mesh.h"
+#include "MortonCode.h"
+#include "../voxel/Voxel.h"
 
 Mesh::Mesh()
 {
 }
 
-void Mesh::addTri(unsigned int a, unsigned int b, unsigned int c)
+unsigned int Mesh::addTri(unsigned int a, unsigned int b, unsigned int c)
 {
-	tris_.push_back(glm::ivec3(a, b, c));
-}
+	unsigned int index = tris_.size();
+	tris_[index] = glm::ivec3(a, b, c);
+	return index;
 
-std::list<glm::ivec3> & Mesh::tris()
-{
-	return tris_;
+	/*
+	this doesn't work...
+
+	glm::ivec3 tri(a, b, c);
+	MortonCode codec;
+	unsigned int hash = codec.encode(tri);
+	tris_[hash] = tri;
+	return hash;
+	*/
 }
 
 unsigned int Mesh::addVertex(const glm::vec3 & vertex)
 {
-	unsigned int index = findVertex(vertex);
-	if (index != -1)
-	{
-		return index;
-	}
-	vertices_.push_back(vertex);
-	return (vertices_.size() - 1);
+	MortonCode codec;
+	unsigned int hash = codec.encode(glm::ivec3(
+		static_cast<unsigned int>(vertex.x),
+		static_cast<unsigned int>(vertex.y),
+		static_cast<unsigned int>(vertex.z)
+	));
+	//if (vertices_.find(hash) == vertices_.end())
+	//{
+		vertices_[hash] = vertex;
+	//}
+	return hash;
 }
 
-unsigned int Mesh::addVertex(const glm::vec3 & vertex, const glm::vec3 & normal)
-{
-	unsigned int index = findVertex(vertex, normal);
-	if (index != -1)
-	{
-		return index;
-	}
-	vertices_.push_back(vertex);
-	normals_.push_back(normal);
-	return (vertices_.size() - 1);
-}
-
-void Mesh::addNormal(const glm::vec3 & normal)
-{
-	normals_.push_back(normal);
-}
-
-std::list<glm::vec3> & Mesh::normals()
-{
-	return normals_;
-}
-
-std::list<glm::vec3> & Mesh::vertices()
+boost::unordered_map<unsigned int, glm::vec3> & Mesh::vertices()
 {
 	return vertices_;
 }
 
-unsigned int Mesh::findVertex(const glm::vec3 & vertex)
+boost::unordered_map<unsigned int, glm::ivec3> & Mesh::tris()
 {
-	// for now just short circuit so new vertices are always added
-	// the below vector searches are extremely slow for finding vertices
-	return -1;
-
-	std::list<glm::vec3>::iterator it;
-	unsigned int index = 0;
-	for (it = vertices_.begin(); it != vertices_.end(); it++)
-	{
-		if (*it == vertex)
-		{
-			return index;
-		}
-		index++;
-	}
-
-	return -1;
+	return tris_;
 }
 
-unsigned int Mesh::findVertex(const glm::vec3 & vertex, const glm::vec3 & normal)
+boost::unordered_map<unsigned int, glm::ivec4> & Mesh::faces()
 {
-	// for now just short circuit so new vertices are always added
-	// the below vector searches are extremely slow for finding vertices
-	return -1;
+	return faces_;
+}
 
-	std::list<glm::vec3>::iterator it = vertices_.begin();
-	unsigned int index = 0;
-	for (; it != vertices_.end(); it++)
+void Mesh::extract(const boost::shared_ptr<Voxel> & voxel, unsigned int faces)
+{
+	if (!voxel->active() || (faces & Voxel::BLOCK_FACE_NONE))
 	{
-		if (*it == vertex)
-		{
-			std::list<glm::vec3>::iterator nit = normals_.begin();
-			for (unsigned int i = 0; i < index; i++)
-			{
-				nit++;
-			}
-			if (*nit == normal)
-			{
-				return index;
-			}
-		}
-		index++;
+		return;
 	}
 
-	/*
-	for (unsigned int i = 0; i < vertices_.size(); i++)
+	if (faces & Voxel::BLOCK_FACE_ALL)
 	{
-		if (vertex == vertices_[i])
-		{
-			if (normal == normals_[i])
-			{
-				return i;
-			}
-		}
+		faces = Voxel::BLOCK_FACE_FRONT|Voxel::BLOCK_FACE_BACK|Voxel::BLOCK_FACE_LEFT|Voxel::BLOCK_FACE_RIGHT|Voxel::BLOCK_FACE_TOP|Voxel::BLOCK_FACE_BOTTOM;
 	}
-	*/
-	/*
-	size_t size = vertices_.size();
-	if (size == 0)
-	{
-		return -1;
-	}
-	glm::vec3 * it = &vertices_.front();
-	for (unsigned int i = 0; i < size; i++)
-	{
-		if (*it == vertex)
-		{
-			if (normal == normals_[i])
-			{
-				return i;
-			}
 
-		}
-		if (i < size-1)
-		{
-			it++;
-		}
-	}
-	*/
-	/*
-	std::vector<glm::vec3>::iterator start = vertices_.begin();
-	std::vector<glm::vec3>::iterator it;
-	do
+	glm::vec3 position = voxel->position();
+	unsigned int type = voxel->type();
+
+	// front
+	glm::vec3 p0 = glm::vec3(0.0f, 0.0f, 1.0f) + position;
+	glm::vec3 p1 = glm::vec3(1.0f, 0.0f, 1.0f) + position;
+	glm::vec3 p2 = glm::vec3(1.0f, 1.0f, 1.0f) + position;
+	glm::vec3 p3 = glm::vec3(0.0f, 1.0f, 1.0f) + position;
+	// back
+	glm::vec3 p4 = glm::vec3(0.0f, 0.0f, 0.0f) + position;
+	glm::vec3 p5 = glm::vec3(1.0f, 0.0f, 0.0f) + position;
+	glm::vec3 p6 = glm::vec3(1.0f, 1.0f, 0.0f) + position;
+	glm::vec3 p7 = glm::vec3(0.0f, 1.0f, 0.0f) + position;
+
+	createFace(type, faces, Voxel::BLOCK_FACE_FRONT,  p0, p1, p2, p3);
+	createFace(type, faces, Voxel::BLOCK_FACE_RIGHT,  p1, p5, p6, p2);
+	createFace(type, faces, Voxel::BLOCK_FACE_TOP,    p2, p6, p7, p3);
+	createFace(type, faces, Voxel::BLOCK_FACE_LEFT,   p4, p0, p3, p7);
+	createFace(type, faces, Voxel::BLOCK_FACE_BOTTOM, p4, p5, p1, p0);
+	createFace(type, faces, Voxel::BLOCK_FACE_BACK,   p5, p4, p7, p6);
+}
+
+void Mesh::createFace(unsigned int type, unsigned int drawFaces, unsigned int inFaces, const glm::vec3 & v0, const glm::vec3 & v1, const glm::vec3 & v2, const glm::vec3 & v3)
+{
+	if (!(drawFaces & inFaces))
 	{
-		it = std::find(start, vertices_.end(), vertex);
-		if (it != vertices_.end())
-		{
-			unsigned int index = it - vertices_.begin();
-			if (normal == normals_[index])
-			{
-				return index;
-			}
-			start = ++it;
-		}
+		return;
 	}
-	while(it != vertices_.end());
-	*/
-	return -1;
+
+	unsigned int p0 = addVertex(v0);
+	unsigned int p1 = addVertex(v1);
+	unsigned int p2 = addVertex(v2);
+	unsigned int p3 = addVertex(v3);
+
+	unsigned int t1 = addTri(p0, p1, p2);
+	unsigned int t2 = addTri(p0, p2, p3);
+
+	unsigned int index = faces_.size();
+	faces_[index] = glm::ivec4(t1, t2, inFaces, type);
 }

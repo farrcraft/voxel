@@ -7,6 +7,8 @@
 
 #include "VertexBuffer.h"
 #include "Mesh.h"
+#include "../voxel/MeshCache.h"
+#include "../voxel/Surface.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <GL/glew.h>
@@ -18,43 +20,198 @@ VertexBuffer::VertexBuffer(boost::shared_ptr<Mesh> & mesh) :
 	vbo_(0),
 	type_(BUFFER_TYPE_STATIC)
 {
-	attribute(0, 3, ATTRIBUTE_TYPE_VERTEX, mesh->vertices().size());
-	attribute(1, 3, ATTRIBUTE_TYPE_NORMAL, mesh->normals().size());
-	allocate();
+	boost::unordered_map<unsigned int, glm::ivec4> faces = mesh->faces();
+	unsigned int faceCount = faces.size();
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> info;
+	std::vector<unsigned int> tris;
+	tris.reserve(faceCount * 6);
+	vertices.reserve(faceCount * 6);
+	info.reserve(faceCount * 6);
+
+	boost::unordered_map<unsigned int, glm::vec3> meshVertices = mesh->vertices();
+	boost::unordered_map<unsigned int, glm::ivec3> meshTris = mesh->tris();
+	glm::ivec3 leftTri;
+	glm::ivec3 rightTri;
+	unsigned int vertexCount = 0;
+	for (unsigned int i = 0; i < faceCount; i++)
+	{
+		glm::ivec4 face = faces[i];
+		leftTri = meshTris[face.x];
+		rightTri = meshTris[face.y];
+		vertices.push_back(meshVertices[leftTri.x]);
+		vertices.push_back(meshVertices[leftTri.y]);
+		vertices.push_back(meshVertices[leftTri.z]);
+
+		vertices.push_back(meshVertices[rightTri.x]);
+		vertices.push_back(meshVertices[rightTri.y]);
+		vertices.push_back(meshVertices[rightTri.z]);
+
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+
+		tris.push_back(vertexCount + 0);
+		tris.push_back(vertexCount + 1);
+		tris.push_back(vertexCount + 2);
+
+		tris.push_back(vertexCount + 3);
+		tris.push_back(vertexCount + 4);
+		tris.push_back(vertexCount + 5);
+		vertexCount += 6;
+	}
 
 	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
 	std::stringstream msg;
-
-	// fill buffer with mesh data
-	std::list<glm::vec3> vertexList = mesh->vertices();
-	std::vector<glm::vec3> vertices;
-	msg << "reserving " << vertexList.size() << " vertices ";
-	vertices.reserve(vertexList.size());
-	vertices.assign(vertexList.begin(), vertexList.end());
-	data3f(0, vertices);
-
-	std::list<glm::vec3> normalList = mesh->normals();
-	std::vector<glm::vec3> normals;
-	msg << "reserving " << normalList.size() << " normals ";
-	normals.reserve(normalList.size());
-	normals.assign(normalList.begin(), normalList.end());
-	data3f(1, normals);
-
-	std::list<glm::ivec3> triList = mesh->tris();
-	std::vector<unsigned int> tris;
-	msg << "reserving " << triList.size() << " tris " << std::endl;
-	tris.reserve(triList.size() * 3);
-	std::list<glm::ivec3>::iterator tit = triList.begin();
-	for (; tit != triList.end(); tit++)
-	{
-		tris.push_back(tit->x);
-		tris.push_back(tit->y);
-		tris.push_back(tit->z);
-	}
-	indices(tris);
-
+	msg << "allocated " << vertices.size() << " vertices ";
 	LOG4CXX_INFO(logger, msg.str());
+
+	attribute(0, 3, ATTRIBUTE_TYPE_VERTEX, vertices.size());
+	attribute(1, 2, ATTRIBUTE_TYPE_GENERIC, info.size());
+	allocate();
+	data3f(0, vertices);
+	data2f(1, info);
+	indices(tris);
 }
+
+
+VertexBuffer::VertexBuffer(boost::shared_ptr<MeshCache> & mesh) :
+	ebo_(0),
+	vbo_(0),
+	type_(BUFFER_TYPE_STATIC)
+{
+	glm::ivec4 * faces = mesh->faces();
+	unsigned int faceCount = mesh->faceCount();
+	std::vector<glm::vec2> info;
+	info.reserve(faceCount * 6);
+
+	glm::vec3 * meshVertices = mesh->vertices();
+	glm::ivec3 * meshTris = mesh->tris();
+	glm::ivec3 leftTri;
+	glm::ivec3 rightTri;
+	unsigned int vertexCount = mesh->vertexCount();
+	for (unsigned int i = 0; i < faceCount; i++)
+	{
+		glm::ivec4 face = faces[i];
+
+		leftTri = meshTris[face.x];
+		rightTri = meshTris[face.y];
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+		info.push_back(glm::vec2(face.z, face.w));
+	}
+	attribute(0, 3, ATTRIBUTE_TYPE_VERTEX, vertexCount);
+	attribute(1, 2, ATTRIBUTE_TYPE_GENERIC, info.size());
+
+	allocate();
+	set(0, glm::value_ptr(meshVertices[0]), vertexCount);
+	data2f(1, info);
+	indices(meshTris, mesh->triCount() * 3);
+}
+
+
+VertexBuffer::VertexBuffer(boost::shared_ptr<Surface> & surface) :
+	ebo_(0),
+	vbo_(0),
+	type_(BUFFER_TYPE_STATIC)
+{
+	boost::unordered_map<unsigned int, glm::vec3> surfaceVertices = surface->vertices();
+	boost::unordered_map<unsigned int, glm::ivec3> surfaceTris = surface->tris();
+	std::list<glm::ivec4> faces = surface->faces();
+
+	std::vector<unsigned int> tris;
+	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec2> info;
+
+	// two tris per face & 4 unique vertices per face
+	unsigned int triCount = faces.size() * 2;
+	// extract compacted vertices when passing to GPU
+	unsigned int vertexCount = triCount * 3;
+
+	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
+	std::stringstream msg;
+	msg << "reserving " << vertexCount << " vertices ";
+	msg << "reserving " << triCount << " tris " << std::endl;
+	LOG4CXX_INFO(logger, msg.str());
+
+	// allocate vector space in advance
+	tris.reserve(triCount);
+	vertices.reserve(vertexCount);
+	info.reserve(vertexCount);
+
+	glm::ivec3 leftTri;
+	glm::ivec3 rightTri;
+	unsigned int faceType = 0;
+	unsigned int blockType = 0;
+
+	unsigned int firstVertex;
+
+	for (std::list<glm::ivec4>::iterator face = faces.begin();
+		 face != faces.end();
+		 face++)
+	{
+		leftTri = surfaceTris[(*face).x];
+		rightTri = surfaceTris[(*face).y];
+		faceType = (*face).z;
+		blockType = (*face).w;
+
+		// index of first vertex on this tri
+		firstVertex = vertices.size();
+
+		// add vertex data for first tri
+		for (unsigned int leftIndex = 0; leftIndex < 3; leftIndex++)
+		{
+			vertices.push_back(surfaceVertices[leftTri[leftIndex]]);
+			info.push_back(glm::vec2(faceType, blockType));
+			tris.push_back(firstVertex + leftIndex);
+		}
+
+		// vertex data for second tri
+		firstVertex = vertices.size();
+		for (unsigned int rightIndex = 0; rightIndex < 3; rightIndex++)
+		{
+			vertices.push_back(surfaceVertices[rightTri[rightIndex]]);
+			info.push_back(glm::vec2(faceType, blockType));
+			tris.push_back(firstVertex + rightIndex);
+			/* can't reuse vertices at this stage...
+			// reuse vertex indices from the first tri for shared vertices
+			bool sharedVertex = false;
+			for (unsigned int leftIndex = 0; leftIndex < 3; leftIndex++)
+			{
+				if (rightTri[rightIndex] == leftTri[leftIndex])
+				{
+					tris.push_back(firstVertex + leftIndex);
+					sharedVertex = true;
+					break;
+				}
+			}
+			if (!sharedVertex)
+			{
+				vertices.push_back(surfaceVertices[rightTri[rightIndex]]);
+				info.push_back(glm::vec2(faceType, blockType));
+				tris.push_back(firstVertex + 3);
+			}
+			*/
+		}
+	}
+
+	attribute(0, 3, ATTRIBUTE_TYPE_VERTEX, vertices.size());
+	attribute(1, 2, ATTRIBUTE_TYPE_GENERIC, info.size());
+	allocate();
+
+	data3f(0, vertices);
+	data2f(1, info);
+	indices(tris);
+}
+
 
 
 VertexBuffer::VertexBuffer() :
@@ -138,6 +295,33 @@ void VertexBuffer::indices(const std::vector<unsigned int> & data)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_ * sizeof(unsigned int), &data[0], usage);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
+void VertexBuffer::indices(glm::ivec3 * data, size_t count)
+{
+	indices_ = count;
+	if (ebo_ == 0)
+	{
+		glGenBuffers(1, &ebo_);
+	}
+	GLenum usage;
+	switch (type_)
+	{
+		case BUFFER_TYPE_STATIC:
+			usage = GL_STATIC_DRAW;
+			break;
+		case BUFFER_TYPE_DYNAMIC:
+			usage = GL_DYNAMIC_DRAW;
+			break;
+		default:
+			usage = GL_STATIC_DRAW;
+			break;
+	}
+	// NB - ebo's are bound to the vao so the vao must already be bound
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_ * sizeof(unsigned int), &(data[0].x), usage);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 
 void VertexBuffer::allocate()
 {

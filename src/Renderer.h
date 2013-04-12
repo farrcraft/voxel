@@ -18,6 +18,7 @@ class Scene;
 class AssetLoader;
 class VertexBuffer;
 class DebugOverlay;
+class ChunkBufferPool;
 
 /**
  * Main engine renderer
@@ -50,4 +51,5 @@ class Renderer
 		boost::shared_ptr<Scene> scene_;
 		bool debug_;
 		boost::shared_ptr<DebugOverlay> debugOverlay_;
+		boost::shared_ptr<ChunkBufferPool> pool_;
 };

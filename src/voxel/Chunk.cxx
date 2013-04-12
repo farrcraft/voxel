@@ -124,3 +124,12 @@ unsigned int Chunk::size() const
 {
 	return size_;
 }
+
+bool Chunk::empty() const
+{
+	if (blocks_.size() == 0)
+	{
+		return true;
+	}
+	return false;
+}

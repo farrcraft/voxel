@@ -109,7 +109,10 @@
     <ClCompile Include="..\..\src\Renderer.cxx" />
     <ClCompile Include="..\..\src\Scene.cxx" />
     <ClCompile Include="..\..\src\voxel\Chunk.cxx" />
+    <ClCompile Include="..\..\src\voxel\ChunkBufferPool.cxx" />
     <ClCompile Include="..\..\src\voxel\MeshBuilder.cxx" />
+    <ClCompile Include="..\..\src\voxel\MeshCache.cxx" />
+    <ClCompile Include="..\..\src\voxel\Surface.cxx" />
     <ClCompile Include="..\..\src\voxel\TerrainMap.cxx" />
     <ClCompile Include="..\..\src\voxel\Voxel.cxx" />
     <ClCompile Include="..\..\src\voxel\World.cxx" />
@@ -138,7 +141,10 @@
     <ClInclude Include="..\..\src\Scene.h" />
     <ClInclude Include="..\..\src\Version.h" />
     <ClInclude Include="..\..\src\voxel\Chunk.h" />
+    <ClInclude Include="..\..\src\voxel\ChunkBufferPool.h" />
     <ClInclude Include="..\..\src\voxel\MeshBuilder.h" />
+    <ClInclude Include="..\..\src\voxel\MeshCache.h" />
+    <ClInclude Include="..\..\src\voxel\Surface.h" />
     <ClInclude Include="..\..\src\voxel\TerrainMap.h" />
     <ClInclude Include="..\..\src\voxel\Voxel.h" />
     <ClInclude Include="..\..\src\voxel\World.h" />

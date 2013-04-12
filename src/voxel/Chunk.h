@@ -31,6 +31,8 @@ class Chunk
 
 		boost::unordered_map<unsigned int, boost::shared_ptr<Voxel> > & blocks();
 
+		bool empty() const;
+
 		/**
 		 * Check to see if a neighboring block exists with an opposing face that makes the checking block's face hidden
 		 *

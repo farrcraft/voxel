@@ -12,6 +12,8 @@
 #include <vector>
 
 class Mesh;
+class MeshCache;
+class Surface;
 
 /**
  * A class for GPU buffer data
@@ -45,6 +47,8 @@ class VertexBuffer
 		} BufferType;
 
 		VertexBuffer(boost::shared_ptr<Mesh> & mesh);
+		VertexBuffer(boost::shared_ptr<MeshCache> & mesh);
+		VertexBuffer(boost::shared_ptr<Surface> & surface);
 		VertexBuffer();
 		~VertexBuffer();
 
@@ -58,6 +62,7 @@ class VertexBuffer
 		void render();
 
 		void indices(const std::vector<unsigned int> & data);
+		void indices(glm::ivec3 * data, size_t count);
 		void allocate();
 
 	protected:
