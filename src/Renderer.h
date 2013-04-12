@@ -8,6 +8,7 @@
 #pragma once
 
 #include "voxel/Voxel.h"
+#include "voxel/MeshBuilder.h"
 
 #include <hookah/Window.h>
 
@@ -16,7 +17,6 @@
 class Program;
 class Scene;
 class AssetLoader;
-class VertexBuffer;
 class DebugOverlay;
 class ChunkBufferPool;
 
@@ -46,10 +46,10 @@ class Renderer
 
 	private:
 		std::map<std::string, boost::shared_ptr<Program> > programs_;
-		boost::shared_ptr<VertexBuffer> buffer_;
 		unsigned int vao_;
 		boost::shared_ptr<Scene> scene_;
 		bool debug_;
 		boost::shared_ptr<DebugOverlay> debugOverlay_;
 		boost::shared_ptr<ChunkBufferPool> pool_;
+		MeshBuilder builder_;
 };

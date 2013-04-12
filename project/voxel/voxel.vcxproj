@@ -92,7 +92,6 @@
     <ClCompile Include="..\..\src\engine\Camera.cxx" />
     <ClCompile Include="..\..\src\engine\Light.cxx" />
     <ClCompile Include="..\..\src\engine\Material.cxx" />
-    <ClCompile Include="..\..\src\engine\Mesh.cxx" />
     <ClCompile Include="..\..\src\engine\MortonCode.cxx" />
     <ClCompile Include="..\..\src\engine\Program.cxx" />
     <ClCompile Include="..\..\src\engine\Shader.cxx" />
@@ -112,7 +111,6 @@
     <ClCompile Include="..\..\src\voxel\ChunkBufferPool.cxx" />
     <ClCompile Include="..\..\src\voxel\MeshBuilder.cxx" />
     <ClCompile Include="..\..\src\voxel\MeshCache.cxx" />
-    <ClCompile Include="..\..\src\voxel\Surface.cxx" />
     <ClCompile Include="..\..\src\voxel\TerrainMap.cxx" />
     <ClCompile Include="..\..\src\voxel\Voxel.cxx" />
     <ClCompile Include="..\..\src\voxel\World.cxx" />
@@ -124,7 +122,6 @@
     <ClInclude Include="..\..\src\engine\Camera.h" />
     <ClInclude Include="..\..\src\engine\Light.h" />
     <ClInclude Include="..\..\src\engine\Material.h" />
-    <ClInclude Include="..\..\src\engine\Mesh.h" />
     <ClInclude Include="..\..\src\engine\MortonCode.h" />
     <ClInclude Include="..\..\src\engine\Program.h" />
     <ClInclude Include="..\..\src\engine\Shader.h" />
@@ -144,7 +141,6 @@
     <ClInclude Include="..\..\src\voxel\ChunkBufferPool.h" />
     <ClInclude Include="..\..\src\voxel\MeshBuilder.h" />
     <ClInclude Include="..\..\src\voxel\MeshCache.h" />
-    <ClInclude Include="..\..\src\voxel\Surface.h" />
     <ClInclude Include="..\..\src\voxel\TerrainMap.h" />
     <ClInclude Include="..\..\src\voxel\Voxel.h" />
     <ClInclude Include="..\..\src\voxel\World.h" />

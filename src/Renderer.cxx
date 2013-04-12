@@ -15,7 +15,6 @@
 #include "engine/Camera.h"
 #include "engine/Light.h"
 #include "engine/Material.h"
-#include "engine/VertexBuffer.h"
 #include "voxel/MeshBuilder.h"
 #include "voxel/ChunkBufferPool.h"
 
@@ -30,7 +29,8 @@
 
 Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoader> & loader) : 
 	scene_(scene),
-	debug_(false)
+	debug_(false),
+	builder_(scene->chunks())
 {
 	// log GL version info
 	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
@@ -90,20 +90,9 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	glBindVertexArray(vao_);
 
 	// build mesh data from world chunks
-	MeshBuilder generator(scene_->chunks());
-
-	/*
-	boost::shared_ptr<Mesh> mesh;
-	mesh = generator.build();
-	buffer_.reset(new VertexBuffer(mesh));
-	*/
-	pool_ = generator.build2();
-
-	/*
-	boost::shared_ptr<Surface> surface;
-	surface = generator.buildSurface();
-	buffer_.reset(new VertexBuffer(surface));
-	*/
+	//MeshBuilder generator(scene_->chunks());
+	//pool_ = generator.build();
+	pool_.reset(new ChunkBufferPool());
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -156,7 +145,6 @@ void Renderer::draw(Hookah::Window * window)
 		scene_->camera()->dirty(false);
 	}
 
-	//buffer_->render();
 	pool_->render();
 
 	program->disable();
@@ -170,6 +158,7 @@ void Renderer::draw(Hookah::Window * window)
 
 void Renderer::tick(unsigned int delta)
 {
+	builder_.build(pool_, 16);
 	if (debug_)
 	{
 		debugOverlay_->update(delta);

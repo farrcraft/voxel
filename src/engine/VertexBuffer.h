@@ -11,9 +11,7 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
-class Mesh;
 class MeshCache;
-class Surface;
 
 /**
  * A class for GPU buffer data
@@ -46,9 +44,7 @@ class VertexBuffer
 			BUFFER_TYPE_DYNAMIC
 		} BufferType;
 
-		VertexBuffer(boost::shared_ptr<Mesh> & mesh);
 		VertexBuffer(boost::shared_ptr<MeshCache> & mesh);
-		VertexBuffer(boost::shared_ptr<Surface> & surface);
 		VertexBuffer();
 		~VertexBuffer();
 

@@ -22,6 +22,7 @@ Chunk::Chunk(TerrainMap & terrain, glm::ivec3 chunkPosition, unsigned int ceilin
 	MortonCode encoder;
 	unsigned int hash = 0;
 	chunkPosition *= size_;
+	unsigned int allocated = 0;
 
 	for (unsigned int x = 0; x < size_; x++)
 	{
@@ -49,9 +50,18 @@ Chunk::Chunk(TerrainMap & terrain, glm::ivec3 chunkPosition, unsigned int ceilin
 
 					boost::shared_ptr<Voxel> voxel(new Voxel(type, position));
 					blocks_[hash] = voxel;
+					allocated++;
 				}
 			}
 		}
+	}
+	if (allocated > 0)
+	{
+		dirty_ = true;
+	}
+	else
+	{
+		empty_ = true;
 	}
 }
 
@@ -114,10 +124,16 @@ boost::unordered_map<unsigned int, boost::shared_ptr<Voxel> > & Chunk::blocks()
 
 void Chunk::update()
 {
+	dirty_ = false;
 }
 
 void Chunk::render()
 {
+}
+
+void Chunk::invalidate()
+{
+	dirty_ = true;
 }
 
 unsigned int Chunk::size() const
@@ -127,9 +143,15 @@ unsigned int Chunk::size() const
 
 bool Chunk::empty() const
 {
-	if (blocks_.size() == 0)
-	{
-		return true;
-	}
-	return false;
+	return empty_;
+}
+
+bool Chunk::dirty() const
+{
+	return dirty_;
+}
+
+void Chunk::dirty(bool state)
+{
+	dirty_ = state;
 }
