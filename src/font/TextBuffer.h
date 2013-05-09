@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include "../engine/VertexBuffer.h"
-
 #include <gl/Program.h>
+#include <gl/VertexBuffer.h>
 
 #include <glm/glm.hpp>
 #include <boost/shared_ptr.hpp>
@@ -71,7 +70,7 @@ class TextBuffer
 		glm::vec2 origin_;
 		boost::shared_ptr<v3D::Program> program_;
 		boost::shared_ptr<FontCache> cache_;
-		VertexBuffer buffer_;
+		v3D::VertexBuffer buffer_;
 		// vertex data
 		std::vector<glm::vec3> xyz_;
 		std::vector<glm::vec4> rgba_;

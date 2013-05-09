@@ -3,7 +3,7 @@
  */
 
 #include "ProgramFactory.h"
-#include "AssetLoader.h"
+#include "../AssetLoader.h"
 
 #include <gl/Shader.h>
 

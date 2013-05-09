@@ -18,7 +18,8 @@ TextBuffer::TextBuffer(boost::shared_ptr<v3D::Program> program, unsigned int dep
 	program_(program),
 	ascender_(0.0f),
 	descender_(0.0f),
-	lineStart_(0)
+	lineStart_(0),
+	buffer_(v3D::VertexBuffer::BUFFER_TYPE_DYNAMIC)
 {
 	cache_.reset(new FontCache(512, 512, depth));
 }
@@ -141,11 +142,11 @@ void TextBuffer::addVertex(glm::vec3 position, glm::vec2 texture, glm::vec4 colo
 
 void TextBuffer::upload()
 {
-	buffer_.attribute(0, 3, VertexBuffer::ATTRIBUTE_TYPE_VERTEX, xyz_.size());
-	buffer_.attribute(1, 2, VertexBuffer::ATTRIBUTE_TYPE_NORMAL, uv_.size());
-	buffer_.attribute(2, 4, VertexBuffer::ATTRIBUTE_TYPE_COLOR, rgba_.size());
-	buffer_.attribute(3, 1, VertexBuffer::ATTRIBUTE_TYPE_GENERIC, shift_.size());
-	buffer_.attribute(4, 1, VertexBuffer::ATTRIBUTE_TYPE_GENERIC, gamma_.size());
+	buffer_.attribute(0, 3, v3D::VertexBuffer::ATTRIBUTE_TYPE_VERTEX, xyz_.size());
+	buffer_.attribute(1, 2, v3D::VertexBuffer::ATTRIBUTE_TYPE_NORMAL, uv_.size());
+	buffer_.attribute(2, 4, v3D::VertexBuffer::ATTRIBUTE_TYPE_COLOR, rgba_.size());
+	buffer_.attribute(3, 1, v3D::VertexBuffer::ATTRIBUTE_TYPE_GENERIC, shift_.size());
+	buffer_.attribute(4, 1, v3D::VertexBuffer::ATTRIBUTE_TYPE_GENERIC, gamma_.size());
 
 	buffer_.allocate();
 

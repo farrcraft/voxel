@@ -1,5 +1,4 @@
 #include "Material.h"
-#include "Program.h"
 
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>

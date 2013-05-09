@@ -17,7 +17,7 @@
 #include "voxel/MeshBuilder.h"
 #include "voxel/ChunkBufferPool.h"
 #include "engine/MaterialFactory.h"
-#include "ProgramFactory.h"
+#include "engine/ProgramFactory.h"
 
 #include <gl/Shader.h>
 

@@ -7,7 +7,7 @@
 
 #include "MeshBuilder.h"
 #include "Chunk.h"
-#include "../engine/VertexBuffer.h"
+#include "../engine/VertexBufferBuilder.h"
 #include "MeshCache.h"
 #include "ChunkBufferPool.h"
 #include "../engine/MortonCode.h"
@@ -146,8 +146,8 @@ void MeshBuilder::generateChunk(const boost::shared_ptr<ChunkBufferPool> & pool,
 		}
 		cache_->extract((*it).second, faces);
 	}
-
-	boost::shared_ptr<VertexBuffer> buffer(new VertexBuffer(cache_));
+	VertexBufferBuilder builder;
+	boost::shared_ptr<v3D::VertexBuffer> buffer = builder.build(cache_);
 	pool->add(chunkId, buffer);
 	chunk->dirty(false);
 }

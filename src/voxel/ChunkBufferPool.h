@@ -10,15 +10,15 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
 
-class VertexBuffer;
+#include <gl/VertexBuffer.h>
 
 class ChunkBufferPool
 {
 	public:
-		void add(size_t chunkId, const boost::shared_ptr<VertexBuffer> & buffer);
-		boost::shared_ptr<VertexBuffer> get(size_t chunkId);
+		void add(size_t chunkId, const boost::shared_ptr<v3D::VertexBuffer> & buffer);
+		boost::shared_ptr<v3D::VertexBuffer> get(size_t chunkId);
 		void render() const;
 
 	private:
-		boost::unordered_map<size_t, boost::shared_ptr<VertexBuffer> > pool_;
+		boost::unordered_map<size_t, boost::shared_ptr<v3D::VertexBuffer> > pool_;
 };
