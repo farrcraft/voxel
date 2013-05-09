@@ -15,9 +15,9 @@
 MeshBuilder::MeshBuilder(boost::unordered_map<unsigned int, boost::shared_ptr<Chunk > > & chunks) :
 	chunks_(chunks)
 {
-	size_t vertices = 32768;
-	size_t tris = 49152;
-	size_t faces = 24576;
+	const size_t vertices = 32768;
+	const size_t tris = 49152;
+	const size_t faces = 24576;
 	cache_.reset(new MeshCache(vertices, tris, faces));
 }
 

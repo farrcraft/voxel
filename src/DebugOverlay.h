@@ -9,16 +9,17 @@
 
 #include "font/TextBuffer.h"
 
+#include <gl/Program.h>
+
 #include <boost/shared_ptr.hpp>
 
 class AssetLoader;
-class Program;
 class Scene;
 
 class DebugOverlay
 {
 	public:
-		DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<Program> shaderProgram, boost::shared_ptr<AssetLoader> loader);
+		DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<v3D::Program> shaderProgram, boost::shared_ptr<AssetLoader> loader);
 
 		void enable(bool status);
 		void render();

@@ -66,7 +66,7 @@ void Player::move(Movement direction)
 			else
 			{
 				glm::vec3 velocity = camera_->currentVelocity();
-				velocity[possibleMoves[i].axis_] = 0.0f;
+				velocity[possibleMoves[i].axis_] = 1.0f;
 				movement_ |= direction;
 				camera_->currentVelocity(velocity.x, velocity.y, velocity.z);
 			}
@@ -97,7 +97,29 @@ void Player::tick(unsigned int delta)
 		}
 	}
 	float elapsedTimeSec = 0.1f;
-	camera_->updatePosition(dir, elapsedTimeSec);
-	position_ = camera_->position();
+	//camera_->updatePosition(dir, elapsedTimeSec);
+	glm::vec3 displacement = camera_->calculateDisplacement(dir, elapsedTimeSec);
+	glm::vec3 position = camera_->calculateMovement(displacement);
+	if (!checkWorldCollision(position))
+	{
+		camera_->position(position);
+
+		//position_ = camera_->position();
+		position_ = position;
+	}
+}
+
+bool Player::checkWorldCollision(const glm::vec3 & position)
+{
+	/*
+	convert position into voxel coordinate space
+	convert voxel position into chunk coordinate space
+	get containing chunk
+	if voxel at position is active
+		return true
+	*/
+	glm::ivec3 voxelPosition;
+	
+	return false;
 }
 

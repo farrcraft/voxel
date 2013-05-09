@@ -11,7 +11,6 @@
 #include "game/Player.h"
 
 #include "engine/Camera.h"
-#include "engine/Mesh.h"
 #include "engine/MortonCode.h"
 
 #include "voxel/Chunk.h"
@@ -29,9 +28,10 @@ Scene::Scene()
 	terrain.generate();
 
 	// block dimensions of the world / chunk size
-	unsigned int worldHeight = 64 / 16;
-	unsigned int worldWidth = 256 / 16;
-	unsigned int worldDepth = 256 / 16;
+	const size_t chunkSize = 16;
+	unsigned int worldHeight = 64 / chunkSize;
+	unsigned int worldWidth = 256 / chunkSize;
+	unsigned int worldDepth = 256 / chunkSize;
 
 	MortonCode encoder;
 	unsigned int hash = 0;

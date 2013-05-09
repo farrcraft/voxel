@@ -139,11 +139,18 @@ void Camera::lookAt(const glm::vec3 &eye, const glm::vec3 &target, const glm::ve
 
 void Camera::move(float dx, float dy, float dz)
 {
+
+	glm::vec3 eye = calculateMovement(glm::vec3(dx, dy, dz));
+    position(eye);
+}
+
+glm::vec3 Camera::calculateMovement(const glm::vec3 & delta)
+{
     // Moves the camera by dx world units to the left or right; dy
     // world units upwards or downwards; and dz world units forwards
     // or backwards.
 
-    glm::vec3 eye = eye_;
+	glm::vec3 eye = eye_;
     glm::vec3 forwards;
 
     if (behavior_ == CAMERA_BEHAVIOR_FIRST_PERSON)
@@ -159,11 +166,11 @@ void Camera::move(float dx, float dy, float dz)
         forwards = direction_;
     }
     
-    eye += xAxis_ * dx;
-    eye += glm::vec3(0.0f, 1.0f, 0.0f) * dy;
-    eye += forwards * dz;
-    
-    position(eye);
+    eye += xAxis_ * delta.x;
+    eye += glm::vec3(0.0f, 1.0f, 0.0f) * delta.y;
+    eye += forwards * delta.z;
+
+	return eye;
 }
 
 void Camera::move(const glm::vec3 &direction, const glm::vec3 &amount)
@@ -353,19 +360,16 @@ void Camera::velocity(const glm::vec3 &velocity)
     velocity_ = velocity;
 }
 
-void Camera::updatePosition(const glm::vec3 &direction, float elapsedTimeSec)
+glm::vec3 Camera::calculateDisplacement(const glm::vec3 &direction, float elapsedTimeSec)
 {
-    // Moves the camera using Newton's second law of motion. Unit mass is
-    // assumed here to somewhat simplify the calculations. The direction vector
-    // is in the range [-1,1].
-
+	glm::vec3 displacement(0.0f);
 	if (glm::length2(currentVelocity_) != 0.0f)
     {
         // Only move the camera if the velocity vector is not of zero length.
         // Doing this guards against the camera slowly creeping around due to
         // floating point rounding errors.
 
-        glm::vec3 displacement = (currentVelocity_ * elapsedTimeSec) +
+        displacement = (currentVelocity_ * elapsedTimeSec) +
             (0.5f * acceleration_ * elapsedTimeSec * elapsedTimeSec);
 
         // Floating point rounding errors will slowly accumulate and cause the
@@ -377,16 +381,31 @@ void Camera::updatePosition(const glm::vec3 &direction, float elapsedTimeSec)
         // account for this the camera's current velocity is also checked.
 
 		if (direction.x == 0.0f && glm::epsilonEqual(currentVelocity_.x, 0.0f, glm::epsilon<float>()))
+		{
             displacement.x = 0.0f;
+		}
 
 		if (direction.y == 0.0f && glm::epsilonEqual(currentVelocity_.y, 0.0f, glm::epsilon<float>()))
+		{
             displacement.y = 0.0f;
+		}
 
 		if (direction.z == 0.0f && glm::epsilonEqual(currentVelocity_.z, 0.0f, glm::epsilon<float>()))
+		{
             displacement.z = 0.0f;
+		}
+	}
+	return displacement;
+}
 
-        move(displacement.x, displacement.y, displacement.z);
-    }
+void Camera::updatePosition(const glm::vec3 &direction, float elapsedTimeSec)
+{
+    // Moves the camera using Newton's second law of motion. Unit mass is
+    // assumed here to somewhat simplify the calculations. The direction vector
+    // is in the range [-1,1].
+
+	glm::vec3 displacement = calculateDisplacement(direction, elapsedTimeSec);
+	move(displacement.x, displacement.y, displacement.z);
 
     // Continuously update the camera's velocity vector even if the camera
     // hasn't moved during this call. When the camera is no longer being moved

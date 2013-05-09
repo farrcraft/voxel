@@ -11,12 +11,15 @@
 #include "Scene.h"
 #include "DebugOverlay.h"
 
-#include "engine/Program.h"
 #include "engine/Camera.h"
 #include "engine/Light.h"
 #include "engine/Material.h"
 #include "voxel/MeshBuilder.h"
 #include "voxel/ChunkBufferPool.h"
+#include "engine/MaterialFactory.h"
+#include "ProgramFactory.h"
+
+#include <gl/Shader.h>
 
 #include <GL/glew.h>
 
@@ -26,6 +29,42 @@
 
 #include <log4cxx/logger.h>
 
+void loadMaterials(boost::shared_ptr<v3D::Program> program)
+{
+	MaterialFactory factory(program);
+	// 	BLOCK_TYPE_DIRT
+	factory.create("materials[0]", glm::vec3(0.9f, 0.5f, 0.3f));
+	//	BLOCK_TYPE_GRASS
+	factory.create("materials[1]", glm::vec3(0.13f, 0.56f, 0.19f));
+	//	BLOCK_TYPE_SAND
+	factory.create("materials[2]", glm::vec3(0.9f, 0.88f, 0.58f));
+	//	BLOCK_TYPE_STONE
+	factory.create("materials[3]", glm::vec3(0.75f, 0.75f, 0.75f));
+	//	BLOCK_TYPE_GRAVEL
+	factory.create("materials[4]", glm::vec3(0.52f, 0.52f, 0.52f));
+	//	BLOCK_TYPE_WATER
+	factory.create("materials[5]", glm::vec3(0.25f, 0.39f, 0.96f));
+	//	BLOCK_TYPE_ORE
+	factory.create("materials[6]", glm::vec3(0.16f, 0.16f, 0.16f));
+	//	BLOCK_TYPE_WOOD
+	factory.create("materials[7]", glm::vec3(0.5f, 0.29f, 0.02f));
+	//	BLOCK_TYPE_LAVA
+	factory.create("materials[8]", glm::vec3(1.0f, 0.47f, 0.12f));
+	//	BLOCK_TYPE_GLASS
+	factory.create("materials[9]", glm::vec3(0.76f, 0.87f, 1.0f));
+	//	BLOCK_TYPE_BEDROCK
+	factory.create("materials[10]", glm::vec3(0.29f, 0.29f, 0.29f));
+	//	BLOCK_TYPE_CLAY
+	factory.create("materials[11]", glm::vec3(0.86f, 0.86f, 0.86f));
+	//	BLOCK_TYPE_ICE
+	factory.create("materials[12]", glm::vec3(0.96f, 0.96f, 0.96f));
+	//	BLOCK_TYPE_SANDSTONE
+	factory.create("materials[13]", glm::vec3(0.85f, 0.81f, 0.56f));
+	//	BLOCK_TYPE_OBSIDIAN
+	factory.create("materials[14]", glm::vec3(0.0f, 0.0f, 0.0f));
+	//	BLOCK_TYPE_SNOW
+	factory.create("materials[15]", glm::vec3(0.91f, 0.91f, 0.91f));
+}
 
 Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoader> & loader) : 
 	scene_(scene),
@@ -48,7 +87,8 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	// setup shaders
 	std::string shaderName;
 	shaderName = "shaders/voxel_ads";
-	boost::shared_ptr<Program> voxelProgram(new Program(Shader::SHADER_TYPE_VERTEX|Shader::SHADER_TYPE_FRAGMENT, shaderName, loader));
+	ProgramFactory factory(loader);
+	boost::shared_ptr<v3D::Program> voxelProgram = factory.create(v3D::Shader::SHADER_TYPE_VERTEX|v3D::Shader::SHADER_TYPE_FRAGMENT, shaderName);
 
 	// setup shader program uniforms
 	voxelProgram->enable();
@@ -75,13 +115,7 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	);
 	light.program(voxelProgram);
 
-	Material material(
-		glm::vec3(0.9f, 0.5f, 0.3f), // ambient
-		glm::vec3(0.9f, 0.5f, 0.3f), // diffuse
-		glm::vec3(0.8f, 0.8f, 0.8f), // specular
-		100.0f // shininess
-	);
-	material.program(voxelProgram);
+	loadMaterials(voxelProgram);
 
 	voxelProgram->disable();
 	programs_["voxel"] = voxelProgram;
@@ -89,9 +123,6 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	glGenVertexArrays(1, &vao_);
 	glBindVertexArray(vao_);
 
-	// build mesh data from world chunks
-	//MeshBuilder generator(scene_->chunks());
-	//pool_ = generator.build();
 	pool_.reset(new ChunkBufferPool());
 
 	glEnable(GL_CULL_FACE);
@@ -106,7 +137,7 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	glFrontFace(GL_CCW);
 
 	// setup the shader program for text rendering
-	boost::shared_ptr<Program> textProgram(new Program(Shader::SHADER_TYPE_VERTEX|Shader::SHADER_TYPE_FRAGMENT, "shaders/text", loader));
+	boost::shared_ptr<v3D::Program> textProgram = factory.create(v3D::Shader::SHADER_TYPE_VERTEX|v3D::Shader::SHADER_TYPE_FRAGMENT, "shaders/text");
 	programs_["text"] = textProgram;
 
 	debugOverlay_.reset(new DebugOverlay(scene_, textProgram, loader));
@@ -119,7 +150,7 @@ void Renderer::draw(Hookah::Window * window)
 	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	boost::shared_ptr<Program> program = programs_["voxel"];
+	boost::shared_ptr<v3D::Program> program = programs_["voxel"];
 	program->enable();
 	
 	//glVertexAttribDivisor(1, 0);
@@ -158,7 +189,10 @@ void Renderer::draw(Hookah::Window * window)
 
 void Renderer::tick(unsigned int delta)
 {
-	builder_.build(pool_, 16);
+	// update chunks
+	size_t maxChunkUpdates = 16;
+	builder_.build(pool_, maxChunkUpdates);
+
 	if (debug_)
 	{
 		debugOverlay_->update(delta);
@@ -180,7 +214,7 @@ void Renderer::resize(int width, int height)
 	);
 	glm::mat4 projection;
 	projection = scene_->camera()->projection();
-	boost::shared_ptr<Program> voxelProgram = programs_["voxel"];
+	boost::shared_ptr<v3D::Program> voxelProgram = programs_["voxel"];
 	voxelProgram->enable();
 	unsigned int projectionMatrix = voxelProgram->uniform("projectionMatrix");
 	// location, count, transpose, data
@@ -188,7 +222,7 @@ void Renderer::resize(int width, int height)
 	voxelProgram->disable();
 
 	// update orthographic view matrix used for text rendering
-	boost::shared_ptr<Program> textProgram = programs_["text"];
+	boost::shared_ptr<v3D::Program> textProgram = programs_["text"];
 	textProgram->enable();
 	unsigned int MVPMatrix = textProgram->uniform("MVPMatrix");
 	glm::mat4 mvp = glm::ortho(0.0f, w, h, 0.0f, -1.0f, 1.0f);

@@ -6,12 +6,6 @@
  */
 
 #pragma once
-/*
-#include "../engine/Vertex.h"
-#include "../engine/Color.h"
-#include "../engine/Normal.h"
-*/
-#include "../engine/Mesh.h"
 
 #include <glm/glm.hpp>
 

@@ -10,13 +10,11 @@
 #include "TextureAtlas.h"
 #include "TextureFont.h"
 
-#include "../engine/Program.h"
-
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <log4cxx/logger.h>
 
-TextBuffer::TextBuffer(boost::shared_ptr<Program> program, unsigned int depth) :
+TextBuffer::TextBuffer(boost::shared_ptr<v3D::Program> program, unsigned int depth) :
 	program_(program),
 	ascender_(0.0f),
 	descender_(0.0f),

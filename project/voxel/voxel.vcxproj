@@ -60,7 +60,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;c:\local_code\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dgl.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;libnoise.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -81,7 +81,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\local_code\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;C:\local_code\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;C:\local_code\vendor\glew-1.9.0\lib\;C:\local_code\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);C:\local_code\vendor\boost_1_53_0\stage\lib;C:\local_code\v3dlibs\win_build\$(Configuration);C:\local_code\vendor\freetype-2.4.11\objs\win32\vc2010\;C:\local_code\vendor\jpeg-8d\Release\;C:\local_code\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;c:\local_code\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dgl.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -92,9 +92,8 @@
     <ClCompile Include="..\..\src\engine\Camera.cxx" />
     <ClCompile Include="..\..\src\engine\Light.cxx" />
     <ClCompile Include="..\..\src\engine\Material.cxx" />
+    <ClCompile Include="..\..\src\engine\MaterialFactory.cxx" />
     <ClCompile Include="..\..\src\engine\MortonCode.cxx" />
-    <ClCompile Include="..\..\src\engine\Program.cxx" />
-    <ClCompile Include="..\..\src\engine\Shader.cxx" />
     <ClCompile Include="..\..\src\engine\VertexBuffer.cxx" />
     <ClCompile Include="..\..\src\font\FontCache.cxx" />
     <ClCompile Include="..\..\src\font\TextBuffer.cxx" />
@@ -105,6 +104,7 @@
     <ClCompile Include="..\..\src\game\Player.cxx" />
     <ClCompile Include="..\..\src\main.cxx" />
     <ClCompile Include="..\..\src\noise\noiseutils.cpp" />
+    <ClCompile Include="..\..\src\ProgramFactory.cxx" />
     <ClCompile Include="..\..\src\Renderer.cxx" />
     <ClCompile Include="..\..\src\Scene.cxx" />
     <ClCompile Include="..\..\src\voxel\Chunk.cxx" />
@@ -122,9 +122,8 @@
     <ClInclude Include="..\..\src\engine\Camera.h" />
     <ClInclude Include="..\..\src\engine\Light.h" />
     <ClInclude Include="..\..\src\engine\Material.h" />
+    <ClInclude Include="..\..\src\engine\MaterialFactory.h" />
     <ClInclude Include="..\..\src\engine\MortonCode.h" />
-    <ClInclude Include="..\..\src\engine\Program.h" />
-    <ClInclude Include="..\..\src\engine\Shader.h" />
     <ClInclude Include="..\..\src\engine\VertexBuffer.h" />
     <ClInclude Include="..\..\src\font\FontCache.h" />
     <ClInclude Include="..\..\src\font\TextBuffer.h" />
@@ -134,6 +133,7 @@
     <ClInclude Include="..\..\src\game\Item.h" />
     <ClInclude Include="..\..\src\game\Player.h" />
     <ClInclude Include="..\..\src\noise\noiseutils.h" />
+    <ClInclude Include="..\..\src\ProgramFactory.h" />
     <ClInclude Include="..\..\src\Renderer.h" />
     <ClInclude Include="..\..\src\Scene.h" />
     <ClInclude Include="..\..\src\Version.h" />

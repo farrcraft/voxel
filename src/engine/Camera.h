@@ -26,12 +26,17 @@ class Camera
 
 		void lookAt(const glm::vec3 &target);
 		void lookAt(const glm::vec3 &eye, const glm::vec3 &target, const glm::vec3 &up);
+
 		void move(float dx, float dy, float dz);
+		glm::vec3 calculateMovement(const glm::vec3 & delta);
+
 		void move(const glm::vec3 &direction, const glm::vec3 &amount);
 		void perspective(float fovx, float aspect, float znear, float zfar);
 		void rotate(float headingDegrees, float pitchDegrees, float rollDegrees);
+
 		void updatePosition(const glm::vec3 &direction, float elapsedTimeSec);
-    
+		glm::vec3 calculateDisplacement(const glm::vec3 &direction, float elapsedTimeSec);
+
 		const glm::vec3 &acceleration() const;
 		CameraBehavior behavior() const;
 		const glm::vec3 &currentVelocity() const;

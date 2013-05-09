@@ -12,7 +12,7 @@ Light::Light(const glm::vec4 & position, const glm::vec3 & ambient, const glm::v
 {
 }
 
-void Light::program(boost::shared_ptr<Program> program)
+void Light::program(boost::shared_ptr<v3D::Program> program)
 {
 	program->enable();
 	unsigned int position = program->uniform("Light.Position");

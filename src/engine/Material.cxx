@@ -8,18 +8,28 @@ Material::Material(const glm::vec3 & ambient, const glm::vec3 & diffuse, const g
 	ambient_(ambient),
 	specular_(specular),
 	diffuse_(diffuse),
-	shininess_(shininess)
+	shininess_(shininess),
+	name_("Material")
 {
 }
 
-
-void Material::program(boost::shared_ptr<Program> program)
+void Material::uniform(const std::string & name)
 {
+	name_ = name;
+}
+
+void Material::program(boost::shared_ptr<v3D::Program> program)
+{
+	std::string uniform;
 	program->enable();
-	unsigned int ambient = program->uniform("Material.Ka");
-	unsigned int diffuse = program->uniform("Material.Kd");
-	unsigned int specular = program->uniform("Material.Ks");
-	unsigned int shininess = program->uniform("Material.Shininess");
+	uniform = name_ + std::string(".Ka");
+	unsigned int ambient = program->uniform(uniform);
+	uniform = name_ + std::string(".Kd");
+	unsigned int diffuse = program->uniform(uniform);
+	uniform = name_ + std::string(".Ks");
+	unsigned int specular = program->uniform(uniform);
+	uniform = name_ + std::string(".Shininess");
+	unsigned int shininess = program->uniform(uniform);
 
 	glUniform3fv(ambient, 1, glm::value_ptr(ambient_));
 	glUniform3fv(diffuse, 1, glm::value_ptr(diffuse_));

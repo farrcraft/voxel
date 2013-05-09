@@ -7,17 +7,16 @@
 
 #pragma once
 
+#include <gl/Program.h>
 #include <glm/glm.hpp>
 #include <boost/shared_ptr.hpp>
-
-class Program;
 
 class Light
 {
 	public:
 		Light(const glm::vec4 & position, const glm::vec3 & ambient, const glm::vec3 & diffuse, const glm::vec3 & specular);
 
-		void program(boost::shared_ptr<Program> program);
+		void program(boost::shared_ptr<v3D::Program> program);
 
 	private:
 		glm::vec4 position_;

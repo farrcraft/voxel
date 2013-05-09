@@ -46,6 +46,9 @@ int main(int argc, char *argv[])
 	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
 	logger->setLevel(log4cxx::Level::getDebug());
 
+	// seed the random number generator
+	srand(static_cast<unsigned int>(time(NULL)));
+
 	Controller controller(appPath);
 	if (!controller.run())
 	{

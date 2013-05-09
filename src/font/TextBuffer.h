@@ -9,11 +9,12 @@
 
 #include "../engine/VertexBuffer.h"
 
+#include <gl/Program.h>
+
 #include <glm/glm.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
-class Program;
 class FontCache;
 class TextureFont;
 
@@ -48,7 +49,7 @@ class TextBuffer
 			LCD_FILTERING_ON = 3
 		} LcdFiltering;
 
-		TextBuffer(boost::shared_ptr<Program> program, unsigned int depth);
+		TextBuffer(boost::shared_ptr<v3D::Program> program, unsigned int depth);
 
 		void addText(glm::vec2 & pen, const Markup & markup, const std::wstring & text);
 		void clear();
@@ -68,7 +69,7 @@ class TextBuffer
 		float descender_;
 		unsigned int lineStart_;
 		glm::vec2 origin_;
-		boost::shared_ptr<Program> program_;
+		boost::shared_ptr<v3D::Program> program_;
 		boost::shared_ptr<FontCache> cache_;
 		VertexBuffer buffer_;
 		// vertex data

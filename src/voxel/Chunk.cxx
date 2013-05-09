@@ -24,6 +24,9 @@ Chunk::Chunk(TerrainMap & terrain, glm::ivec3 chunkPosition, unsigned int ceilin
 	chunkPosition *= size_;
 	unsigned int allocated = 0;
 
+	// pick a random block type for this chunk. valid solid block type numbers are [1-16].
+	Voxel::BlockType chunkBlockType = static_cast<Voxel::BlockType>(rand() % 16 + 1);
+
 	for (unsigned int x = 0; x < size_; x++)
 	{
 		float posX = static_cast<float>(x + chunkPosition.x);
@@ -46,9 +49,9 @@ Chunk::Chunk(TerrainMap & terrain, glm::ivec3 chunkPosition, unsigned int ceilin
 				{
 					hash = encoder.encode(glm::ivec3(x, y, z));
 					glm::vec3 position(posX, posY, posZ);
-					Voxel::BlockType type = Voxel::BLOCK_TYPE_DIRT;
+					//Voxel::BlockType type = Voxel::BLOCK_TYPE_DIRT;
 
-					boost::shared_ptr<Voxel> voxel(new Voxel(type, position));
+					boost::shared_ptr<Voxel> voxel(new Voxel(chunkBlockType, position));
 					blocks_[hash] = voxel;
 					allocated++;
 				}

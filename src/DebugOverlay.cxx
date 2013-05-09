@@ -18,7 +18,7 @@
 #include <string>
 #include <sstream>
 
-DebugOverlay::DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<Program> shaderProgram, boost::shared_ptr<AssetLoader> loader) :
+DebugOverlay::DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<v3D::Program> shaderProgram, boost::shared_ptr<AssetLoader> loader) :
 	scene_(scene),
 	enabled_(false)
 {
