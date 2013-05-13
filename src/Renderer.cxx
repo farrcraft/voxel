@@ -7,7 +7,6 @@
 
 #include "Renderer.h"
 
-#include "AssetLoader.h"
 #include "Scene.h"
 #include "DebugOverlay.h"
 
@@ -17,9 +16,10 @@
 #include "voxel/MeshBuilder.h"
 #include "voxel/ChunkBufferPool.h"
 #include "engine/MaterialFactory.h"
-#include "engine/ProgramFactory.h"
 
 #include <gl/Shader.h>
+#include <stark/AssetLoader.h>
+#include <stark/ProgramFactory.h>
 
 #include <GL/glew.h>
 

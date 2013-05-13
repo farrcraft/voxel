@@ -7,12 +7,13 @@
 
 #include "Controller.h"
 #include "Renderer.h"
-#include "AssetLoader.h"
 #include "Scene.h"
 #include "game/Player.h"
 
 #include <hookah/Hookah.h>
 #include <command/BindLoader.h>
+
+#include <stark/AssetLoader.h>
 
 #include <boost/bind.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -24,7 +25,7 @@ Controller::Controller(const std::string & path) :
 	path_(path),
 	debug_(false)
 {
-	boost::shared_ptr<AssetLoader> loader(new AssetLoader(path));
+	boost::shared_ptr<AssetLoader> loader(new AssetLoader(path, "voxel.log"));
 
 	// create a new command directory object
 	directory_.reset(new v3D::CommandDirectory());

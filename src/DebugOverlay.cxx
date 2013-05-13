@@ -6,13 +6,14 @@
  */
 
 #include "DebugOverlay.h"
-#include "AssetLoader.h"
 #include "Version.h"
 #include "Scene.h"
 #include "font/TextureFont.h"
 #include "font/FontCache.h"
 #include "font/TextureAtlas.h"
 #include "game/Player.h"
+
+#include <stark/AssetLoader.h>
 
 #include <string>
 #include <sstream>
