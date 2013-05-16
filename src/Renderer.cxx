@@ -17,7 +17,7 @@
 #include "voxel/ChunkBufferPool.h"
 #include "engine/MaterialFactory.h"
 
-#include <gl/Shader.h>
+#include <vertical3d/gl/Shader.h>
 #include <stark/AssetLoader.h>
 #include <stark/ProgramFactory.h>
 

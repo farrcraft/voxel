@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <gl/Program.h>
-#include <gl/VertexBuffer.h>
+#include <vertical3d/gl/Program.h>
+#include <vertical3d/gl/VertexBuffer.h>
 
 #include <glm/glm.hpp>
 #include <boost/shared_ptr.hpp>

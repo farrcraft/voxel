@@ -7,10 +7,10 @@
 
 #pragma once
 
+#include <vertical3d/gl/VertexBuffer.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-
-#include <gl/VertexBuffer.h>
 
 class ChunkBufferPool
 {

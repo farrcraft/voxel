@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <gl/Program.h>
+#include <vertical3d/gl/Program.h>
 #include <glm/glm.hpp>
 #include <boost/shared_ptr.hpp>
 

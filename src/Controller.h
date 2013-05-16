@@ -7,13 +7,13 @@
 
 #pragma once;
 
-#include <hookah/Window.h>
+#include <vertical3d/hookah/Window.h>
 
-#include <input/KeyboardDevice.h>
-#include <input/MouseDevice.h>
+#include <vertical3d/input/KeyboardDevice.h>
+#include <vertical3d/input/MouseDevice.h>
 
-#include <gui/InputEventAdapter.h>
-#include <command/CommandDirectory.h>
+#include <vertical3d/gui/InputEventAdapter.h>
+#include <vertical3d/command/CommandDirectory.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -47,6 +47,8 @@ class Controller :
 		void motion(unsigned int x, unsigned int y);
 		void buttonPressed(unsigned int button);
 		void buttonReleased(unsigned int button);
+
+		void notify(const v3D::EventInfo & e);
 
 	private:
 		boost::shared_ptr<Hookah::Window> window_;

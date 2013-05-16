@@ -9,7 +9,7 @@
 
 #include "font/TextBuffer.h"
 
-#include <gl/Program.h>
+#include <vertical3d/gl/Program.h>
 
 #include <boost/shared_ptr.hpp>
 

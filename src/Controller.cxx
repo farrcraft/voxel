@@ -10,8 +10,8 @@
 #include "Scene.h"
 #include "game/Player.h"
 
-#include <hookah/Hookah.h>
-#include <command/BindLoader.h>
+#include <vertical3d/hookah/Hookah.h>
+#include <vertical3d/command/BindLoader.h>
 
 #include <stark/AssetLoader.h>
 
@@ -98,6 +98,11 @@ bool Controller::run()
 {
 	return window_->run(Hookah::Window::EVENT_HANDLING_NONBLOCKING);
 }
+
+void Controller::notify(const v3D::EventInfo & e)
+{
+}
+
 
 bool Controller::exec(const v3D::CommandInfo & command, const std::string & param)
 {

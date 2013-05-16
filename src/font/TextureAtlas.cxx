@@ -3,8 +3,9 @@
 #include <GL/glew.h>
 #include <log4cxx/logger.h>
 
-#include <image/Image.h>
-#include <image/ImageFactory.h>
+#include <vertical3d/image/Image.h>
+#include <vertical3d/image/ImageFactory.h>
+
 #include <boost/shared_ptr.hpp>
 
 TextureAtlas::TextureAtlas(unsigned int width, unsigned int height, unsigned int depth) :
