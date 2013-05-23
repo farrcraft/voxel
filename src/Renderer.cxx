@@ -135,6 +135,7 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	glEnable(GL_DEPTH_CLAMP);
 	// CCW winding is default
 	glFrontFace(GL_CCW);
+	glActiveTexture(GL_TEXTURE0);
 
 	// setup the shader program for text rendering
 	boost::shared_ptr<v3D::Program> textProgram = factory.create(v3D::Shader::SHADER_TYPE_VERTEX|v3D::Shader::SHADER_TYPE_FRAGMENT, "shaders/text");

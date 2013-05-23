@@ -8,9 +8,8 @@
 #include "DebugOverlay.h"
 #include "Version.h"
 #include "Scene.h"
-#include "font/TextureFont.h"
-#include "font/FontCache.h"
-#include "font/TextureAtlas.h"
+#include <vertical3d/font/TextureFontCache.h>
+#include <vertical3d/font/TextureTextBuffer.h>
 #include "game/Player.h"
 
 #include <stark/AssetLoader.h>
@@ -23,7 +22,9 @@ DebugOverlay::DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<v3D
 	enabled_(false)
 {
 	// setup text buffer
-	text_.reset(new TextBuffer(shaderProgram, TextBuffer::LCD_FILTERING_ON));
+	boost::shared_ptr<v3D::TextureTextBuffer> text;
+	text.reset(new v3D::TextureTextBuffer(v3D::TextureTextBuffer::LCD_FILTERING_ON));
+	renderer_.reset(new v3D::TextureFontRenderer(text, shaderProgram));
 
 	markup_.bold_ = false;
 	markup_.italic_ = false;
@@ -33,19 +34,19 @@ DebugOverlay::DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<v3D
 	markup_.underline_ = false;
 	markup_.overline_ = false;
 	markup_.strikethrough_ = false;
-	markup_.foregroundColor_ = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	markup_.backgroundColor_ = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+	markup_.foregroundColor_ = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	markup_.backgroundColor_ = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 	markup_.size_ = 24.0f;
 
 	// characters to cache
 	const wchar_t *charcodes =  L" !\"#$%&'()*+,-./0123456789:;<=>?"
 								L"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
 								L"`abcdefghijklmnopqrstuvwxyz{|}~";
-	text_->cache()->charcodes(charcodes);
+	text->cache()->charcodes(charcodes);
 
-	//std::string filename = loader->path() + std::string("fonts/DroidSerif-Regular.ttf");
-	std::string filename = loader->path() + std::string("fonts/Vera.ttf");
-	markup_.font_ = text_->cache()->load(filename, markup_.size_);
+	std::string filename = loader->path() + std::string("fonts/DroidSerif-Regular.ttf");
+	//std::string filename = loader->path() + std::string("fonts/Vera.ttf");
+	markup_.font_ = text->cache()->load(filename, markup_.size_);
 }
 
 
@@ -73,7 +74,7 @@ void DebugOverlay::render()
 	{
 		return;
 	}
-	text_->render();
+	renderer_->render();
 }
 
 const unsigned int samples = 100;
@@ -104,7 +105,7 @@ void DebugOverlay::update(unsigned int delta)
 	frames_++;
 	elapsed_ += delta;
 
-	text_->clear();
+	renderer_->buffer()->clear();
 	std::stringstream info;
 	unsigned int fps = averageTick(delta);//frames_ / elapsed_ * 1000;
 	info << "Voxel " << VOXEL_VERSION << "(" << fps << /* ", " << elapsed_ << ", " << frames_ << */ ")" << std::endl;
@@ -117,6 +118,6 @@ void DebugOverlay::update(unsigned int delta)
 	std::string buffer = info.str();
 	std::wstring widestr = std::wstring(buffer.begin(), buffer.end());
 
-	text_->addText(pen, markup_, widestr.c_str());
-	text_->upload();
+	renderer_->buffer()->addText(pen, markup_, widestr.c_str());
+	renderer_->upload();
 }
