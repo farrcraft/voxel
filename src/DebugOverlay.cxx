@@ -98,6 +98,11 @@ unsigned int averageTick(unsigned int newtick)
     return ticksum / samples;
 }
 
+void DebugOverlay::resize(float width, float height)
+{
+	renderer_->resize(width, height);
+}
+
 void DebugOverlay::update(unsigned int delta)
 {
 	glm::vec2 pen(20.0f, 50.0f);

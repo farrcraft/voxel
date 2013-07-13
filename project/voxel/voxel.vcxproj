@@ -94,10 +94,6 @@
     <ClCompile Include="..\..\src\engine\MaterialFactory.cxx" />
     <ClCompile Include="..\..\src\engine\MortonCode.cxx" />
     <ClCompile Include="..\..\src\engine\VertexBufferBuilder.cxx" />
-    <ClCompile Include="..\..\src\font\FontCache.cxx" />
-    <ClCompile Include="..\..\src\font\TextBuffer.cxx" />
-    <ClCompile Include="..\..\src\font\TextureAtlas.cxx" />
-    <ClCompile Include="..\..\src\font\TextureFont.cxx" />
     <ClCompile Include="..\..\src\game\GameState.cxx" />
     <ClCompile Include="..\..\src\game\Item.cxx" />
     <ClCompile Include="..\..\src\game\Player.cxx" />
@@ -122,10 +118,6 @@
     <ClInclude Include="..\..\src\engine\MaterialFactory.h" />
     <ClInclude Include="..\..\src\engine\MortonCode.h" />
     <ClInclude Include="..\..\src\engine\VertexBufferBuilder.h" />
-    <ClInclude Include="..\..\src\font\FontCache.h" />
-    <ClInclude Include="..\..\src\font\TextBuffer.h" />
-    <ClInclude Include="..\..\src\font\TextureAtlas.h" />
-    <ClInclude Include="..\..\src\font\TextureFont.h" />
     <ClInclude Include="..\..\src\game\GameState.h" />
     <ClInclude Include="..\..\src\game\Item.h" />
     <ClInclude Include="..\..\src\game\Player.h" />

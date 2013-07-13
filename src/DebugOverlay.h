@@ -23,6 +23,7 @@ class DebugOverlay
 		void enable(bool status);
 		void render();
 		void update(unsigned int delta);
+		void resize(float width, float height);
 
 		bool enabled() const;
 

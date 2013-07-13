@@ -222,13 +222,7 @@ void Renderer::resize(int width, int height)
 	glUniformMatrix4fv(projectionMatrix, 1, GL_FALSE, glm::value_ptr(projection));
 	voxelProgram->disable();
 
-	// update orthographic view matrix used for text rendering
-	boost::shared_ptr<v3D::Program> textProgram = programs_["text"];
-	textProgram->enable();
-	unsigned int MVPMatrix = textProgram->uniform("MVPMatrix");
-	glm::mat4 mvp = glm::ortho(0.0f, w, h, 0.0f, -1.0f, 1.0f);
-	glUniformMatrix4fv(MVPMatrix, 1, GL_FALSE, glm::value_ptr(mvp));
-	textProgram->disable();
+	debugOverlay_->resize(w, h);
 }
 
 void Renderer::debug(bool status)
