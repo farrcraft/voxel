@@ -9,6 +9,7 @@
 
 #include <vertical3d/gl/Program.h>
 #include <vertical3d/gl/TextureFontRenderer.h>
+#include <vertical3d/font/TextureFontCache.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -32,6 +33,7 @@ class DebugOverlay
 		bool enabled_;
 		v3D::TextureTextBuffer::Markup markup_;
 		boost::shared_ptr<v3D::TextureFontRenderer> renderer_;
+		boost::shared_ptr<v3D::TextureFontCache> fontCache_;
 		size_t frames_;
 		size_t elapsed_;
 };

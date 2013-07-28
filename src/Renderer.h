@@ -46,7 +46,6 @@ class Renderer
 
 	private:
 		std::map<std::string, boost::shared_ptr<v3D::Program> > programs_;
-		unsigned int vao_;
 		boost::shared_ptr<Scene> scene_;
 		bool debug_;
 		boost::shared_ptr<DebugOverlay> debugOverlay_;

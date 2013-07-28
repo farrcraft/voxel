@@ -120,9 +120,6 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	voxelProgram->disable();
 	programs_["voxel"] = voxelProgram;
 
-	glGenVertexArrays(1, &vao_);
-	glBindVertexArray(vao_);
-
 	pool_.reset(new ChunkBufferPool());
 
 	glEnable(GL_CULL_FACE);

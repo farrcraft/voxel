@@ -22,9 +22,9 @@ DebugOverlay::DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<v3D
 	enabled_(false)
 {
 	// setup text buffer
+	fontCache_.reset(new v3D::TextureFontCache(512, 512, v3D::TextureTextBuffer::LCD_FILTERING_ON));
 	boost::shared_ptr<v3D::TextureTextBuffer> text;
-	text.reset(new v3D::TextureTextBuffer(v3D::TextureTextBuffer::LCD_FILTERING_ON));
-	renderer_.reset(new v3D::TextureFontRenderer(text, shaderProgram));
+	text.reset(new v3D::TextureTextBuffer());
 
 	markup_.bold_ = false;
 	markup_.italic_ = false;
@@ -42,11 +42,13 @@ DebugOverlay::DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<v3D
 	const wchar_t *charcodes =  L" !\"#$%&'()*+,-./0123456789:;<=>?"
 								L"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
 								L"`abcdefghijklmnopqrstuvwxyz{|}~";
-	text->cache()->charcodes(charcodes);
+	fontCache_->charcodes(charcodes);
 
 	std::string filename = loader->path() + std::string("fonts/DroidSerif-Regular.ttf");
 	//std::string filename = loader->path() + std::string("fonts/Vera.ttf");
-	markup_.font_ = text->cache()->load(filename, markup_.size_);
+	markup_.font_ = fontCache_->load(filename, markup_.size_);
+
+	renderer_.reset(new v3D::TextureFontRenderer(text, shaderProgram, fontCache_->atlas()));
 }
 
 
