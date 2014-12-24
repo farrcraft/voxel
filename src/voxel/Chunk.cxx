@@ -8,9 +8,6 @@
 #include "Chunk.h"
 #include "../engine/MortonCode.h"
 
-#include <log4cxx/logger.h>
-
-
 Chunk::Chunk(TerrainMap & terrain, glm::ivec3 chunkPosition, unsigned int ceiling) :
 	dirty_(false),
 	size_(16),

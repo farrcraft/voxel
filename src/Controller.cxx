@@ -15,17 +15,14 @@
 
 #include <stark/AssetLoader.h>
 
-#include <boost/bind.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-
-#include <log4cxx/logger.h>
 
 
 Controller::Controller(const std::string & path) : 
 	path_(path),
 	debug_(false)
 {
-	boost::shared_ptr<AssetLoader> loader(new AssetLoader(path, "voxel.log"));
+	boost::shared_ptr<AssetLoader> loader(new AssetLoader(path));
 
 	// create a new command directory object
 	directory_.reset(new v3D::CommandDirectory());

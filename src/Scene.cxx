@@ -17,7 +17,6 @@
 #include "voxel/TerrainMap.h"
 
 #include <glm/gtx/string_cast.hpp>
-#include <log4cxx/logger.h>
 
 Scene::Scene()
 {

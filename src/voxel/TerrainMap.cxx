@@ -10,8 +10,6 @@
 #include <noise.h>
 #include "../noise/noiseutils.h"
 
-#include <log4cxx/logger.h>
-
 class TerrainMap::Noise
 {
 	public:

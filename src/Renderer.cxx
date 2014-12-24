@@ -27,7 +27,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-#include <log4cxx/logger.h>
+#include <boost/log/trivial.hpp>
+
+#include <sstream>
 
 void loadMaterials(boost::shared_ptr<v3D::Program> program)
 {
@@ -72,7 +74,6 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	builder_(scene->chunks())
 {
 	// log GL version info
-	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
 	std::stringstream msg;
 	const GLubyte * renderer = glGetString(GL_RENDERER);
 	const GLubyte * vendor = glGetString(GL_VENDOR);
@@ -82,7 +83,7 @@ Renderer::Renderer(boost::shared_ptr<Scene> & scene, boost::shared_ptr<AssetLoad
 	msg << " Vendor: " << vendor << std::endl;
 	msg << " GL Version: " << version << std::endl;
 	msg << " GLSL: " << glslVersion << std::endl;
-	LOG4CXX_INFO(logger, msg.str());
+	BOOST_LOG_TRIVIAL(info) << msg.str();
 
 	// setup shaders
 	std::string shaderName;

@@ -8,13 +8,11 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 
-#include <log4cxx/logger.h>
-#include <log4cxx/basicconfigurator.h>
-#include <log4cxx/helpers/exception.h>
-#include <log4cxx/fileappender.h>
-#include <log4cxx/simplelayout.h>
-#include <log4cxx/helpers/pool.h>
-#include <log4cxx/helpers/transcoder.h>
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
 
 #include <cstdlib>
 #include <string>
@@ -35,16 +33,17 @@ int main(int argc, char *argv[])
 
 	// setup the logger
 	std::string logfile = appPath + std::string("voxel.log");
-	log4cxx::FileAppender * fileAppender = new log4cxx::FileAppender(log4cxx::LayoutPtr(new log4cxx::SimpleLayout()), 
-		log4cxx::helpers::Transcoder::decode(logfile.c_str()), false);
-	log4cxx::BasicConfigurator::configure(log4cxx::AppenderPtr(fileAppender));
-
-	log4cxx::helpers::Pool p;
-	fileAppender->activateOptions(p);
+	boost::log::add_file_log(
+		boost::log::keywords::file_name = logfile,
+		boost::log::keywords::format = "[%TimeStamp%]: %Severity% - %Message%"
+	);
 
 	// logging level set to debug
-	log4cxx::LoggerPtr logger(log4cxx::Logger::getLogger("voxel.log"));
-	logger->setLevel(log4cxx::Level::getDebug());
+	boost::log::core::get()->set_filter(
+		boost::log::trivial::severity >= boost::log::trivial::debug
+	);
+
+	boost::log::add_common_attributes();
 
 	// seed the random number generator
 	srand(static_cast<unsigned int>(time(NULL)));
