@@ -59,8 +59,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;$(SolutionDir)\..\..\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;$(SolutionDir)\..\..\vendor\glew-1.9.0\lib\;$(SolutionDir)\..\..\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);$(SolutionDir)\..\..\vendor\boost_1_53_0\stage\lib;$(SolutionDir)\..\..\v3dlibs\win_build\$(Configuration);$(SolutionDir)\..\..\vendor\freetype-2.4.11\objs\win32\vc2010\;$(SolutionDir)\..\..\vendor\jpeg-8d\Release\;$(SolutionDir)\..\..\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;$(SolutionDir)\..\..\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;$(SolutionDir)\..\..\stark\build.win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3dgui.lib;libv3dgl.lib;libv3dcommand.lib;libv3devent.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;libnoise.lib;libstark.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\vendor\SDL2-2.0.3\build\$(Configuration)\;$(SolutionDir)\..\..\vendor\glew-1.11.0\lib\$(Configuration)\Win32\;$(SolutionDir)\..\..\vendor\boost_1_57_0\stage\lib;$(SolutionDir)\..\..\v3dlibs\win_build\$(Configuration);$(SolutionDir)\..\..\vendor\freetype-2.5.4\freetype-2.5.4\$(Configuration)\;$(SolutionDir)\..\..\vendor\jpeg-9a\Release\;$(SolutionDir)\..\..\vendor\libpng-1.6.15\$(Configuration)\;$(SolutionDir)\..\..\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;$(SolutionDir)\..\..\stark\build.win32\$(Configuration);$(SolutionDir)\..\..\vendor\zlib-1.2.8\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32d.lib;libv3dinput.lib;libv3dgui.lib;libv3dgl.lib;libv3dcommand.lib;libv3devent.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype.lib;zlibd.lib;libpng16d.lib;jpeg.lib;libnoise.lib;libstark.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -80,7 +80,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\vendor\SDL2\VisualC\SDL\Win32\$(Configuration)\;$(SolutionDir)\..\..\vendor\SDL2\VisualC\SDLmain\Win32\$(Configuration)\;$(SolutionDir)\..\..\vendor\glew-1.9.0\lib\;$(SolutionDir)\..\..\vendor\apache-logger\apache-log4cxx-0.10.0\projects\$(Configuration);$(SolutionDir)\..\..\vendor\boost_1_53_0\stage\lib;$(SolutionDir)\..\..\v3dlibs\win_build\$(Configuration);$(SolutionDir)\..\..\vendor\freetype-2.4.11\objs\win32\vc2010\;$(SolutionDir)\..\..\vendor\jpeg-8d\Release\;$(SolutionDir)\..\..\vendor\libpng-1.5.10\projects\vstudio\$(Configuration)\;$(SolutionDir)\..\..\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;$(SolutionDir)\..\..\stark\build.win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\vendor\SDL2-2.0.3\build\$(Configuration)\;$(SolutionDir)\..\..\vendor\glew-1.11.0\lib\$(Configuration)\Win32\;$(SolutionDir)\..\..\vendor\boost_1_57_0\stage\lib;$(SolutionDir)\..\..\v3dlibs\win_build\$(Configuration);$(SolutionDir)\..\..\vendor\freetype-2.5.4\freetype-2.5.4\$(Configuration)\;$(SolutionDir)\..\..\vendor\jpeg-9a\Release\;$(SolutionDir)\..\..\vendor\libpng-1.6.15\$(Configuration)\;$(SolutionDir)\..\..\vendor\libnoisesrc-1.0.0\noise\win32\$(Configuration)\;$(SolutionDir)\..\..\stark\build.win32\$(Configuration);$(SolutionDir)\..\..\vendor\zlib-1.2.8\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;opengl32.lib;glew32.lib;log4cxx.lib;libv3dinput.lib;libv3devent.lib;libv3dgui.lib;libv3dgl.lib;libv3dcommand.lib;libhookah.lib;libhookah_sdl2.lib;libv3dfont.lib;libv3dimage.lib;freetype2411.lib;zlib.lib;libpng15.lib;jpeg.lib;libstark.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
@@ -112,6 +112,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Controller.h" />
     <ClInclude Include="..\..\src\DebugOverlay.h" />
+    <ClInclude Include="..\..\src\engine\Aligned.h" />
     <ClInclude Include="..\..\src\engine\Camera.h" />
     <ClInclude Include="..\..\src\engine\Light.h" />
     <ClInclude Include="..\..\src\engine\Material.h" />

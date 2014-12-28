@@ -7,13 +7,15 @@
 
 #pragma once
 
+#include "Aligned.h"
+
 #include <glm/glm.hpp>
 
 /**
  * Player camera class
  * Based on the source here: http://www.dhpoware.com/demos/index.html
  */
-class Camera
+class Camera : public Aligned<16>
 {
 	public:
 		typedef enum CameraBehavior

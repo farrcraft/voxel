@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "engine/Aligned.h"
+
 #include <vertical3d/gl/Program.h>
 #include <vertical3d/gl/TextureFontRenderer.h>
 #include <vertical3d/font/TextureFontCache.h>
@@ -16,7 +18,7 @@
 class AssetLoader;
 class Scene;
 
-class DebugOverlay
+class DebugOverlay : public Aligned<16>
 {
 	public:
 		DebugOverlay(boost::shared_ptr<Scene> scene, boost::shared_ptr<v3D::Program> shaderProgram, boost::shared_ptr<AssetLoader> loader);

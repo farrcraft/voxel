@@ -8,7 +8,22 @@
 #include "Player.h"
 #include "../engine/Camera.h"
 
-float offset = 0.05f;
+typedef struct Moves
+{
+	unsigned int move_; // movement flag
+	unsigned int axis_; // vector position of movement
+	float magnitude_; // negative or positive movement vector
+} Moves;
+
+Moves possibleMoves[] =
+{
+	{ Player::MOVE_FORWARD, 2, 1.0f },
+	{ Player::MOVE_BACKWARD, 2, -1.0f },
+	{ Player::MOVE_RIGHT, 0, 1.0f },
+	{ Player::MOVE_LEFT, 0, -1.0f },
+	{ Player::MOVE_UP, 1, 1.0f },
+	{ Player::MOVE_DOWN, 1, -1.0f }
+};
 
 Player::Player(const glm::vec3 & pos) :
 	position_(pos),
@@ -36,40 +51,24 @@ void Player::position(const glm::vec3 & pos)
 	position_ = pos;
 }
 
-typedef struct Moves 
-{
-	unsigned int move_; // movement flag
-	unsigned int axis_; // vector position of movement
-	float magnitude_; // negative or positive movement vector
-} Moves;
-
-Moves possibleMoves[] = 
-{
-	{Player::MOVE_FORWARD, 2, 1.0f},
-	{Player::MOVE_BACKWARD, 2, -1.0f},
-	{Player::MOVE_RIGHT, 0, 1.0f},
-	{Player::MOVE_LEFT, 0, -1.0f},
-	{Player::MOVE_UP, 1, 1.0f},
-	{Player::MOVE_DOWN, 1, -1.0f}
-};
-
 void Player::move(Movement direction)
 {
 	for (unsigned int i = 0; i < 6; i++)
 	{
 		if (direction == possibleMoves[i].move_)
 		{
+			glm::vec3 velocity = camera_->currentVelocity();
 			if (movement_ & direction)
 			{
+				velocity[possibleMoves[i].axis_] = 0.0f;
 				movement_ &= ~direction;
 			}
 			else
 			{
-				glm::vec3 velocity = camera_->currentVelocity();
-				velocity[possibleMoves[i].axis_] = 1.0f;
+				velocity[possibleMoves[i].axis_] = possibleMoves[i].magnitude_;
 				movement_ |= direction;
-				camera_->currentVelocity(velocity.x, velocity.y, velocity.z);
 			}
+			camera_->currentVelocity(velocity.x, velocity.y, velocity.z);
 			return;
 		}
 	}
@@ -77,7 +76,7 @@ void Player::move(Movement direction)
 
 void Player::look(float heading, float pitch)
 {
-	float cameraRotationSpeed = 0.2f;
+	const float cameraRotationSpeed = 0.01f;
 
 	heading *= cameraRotationSpeed;
 	pitch *= cameraRotationSpeed;

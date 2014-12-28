@@ -4,3 +4,7 @@
 /project/*.suo
 /project/*sdf
 /project/voxel/*.user
+/project/voxel/*.log
+ChangeLog.txt
+NOTES.txt
+TODO.txt
