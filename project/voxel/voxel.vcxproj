@@ -135,6 +135,7 @@
     <ClInclude Include="..\..\src\voxel\World.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\.gitignore" />
     <None Include="..\..\ChangeLog.txt" />
     <None Include="..\..\data\shaders\text.frag" />
     <None Include="..\..\data\shaders\text.vert" />
